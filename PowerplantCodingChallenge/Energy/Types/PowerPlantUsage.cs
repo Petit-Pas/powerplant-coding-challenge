@@ -12,6 +12,6 @@ namespace PowerplantCodingChallenge.Energy.Types
 
         // Should be round to .1
         [JsonProperty(PropertyName = "p")]
-        public float Power { get; set; }
+        public double Power { get; set; }
     }
 }

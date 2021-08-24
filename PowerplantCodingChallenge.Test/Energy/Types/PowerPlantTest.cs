@@ -8,13 +8,27 @@ namespace PowerplantCodingChallenge.Test.Energy.Types
 {
     public class PowerPlantTest
     {
+        private EnergyMetrics _energyMetrics;
+
+        [SetUp]
+        public void Setup()
+        {
+            _energyMetrics = new EnergyMetrics()
+            {
+                Co2 = 20,
+                GasCost = 15,
+                KersosineCost = 50,
+                WindEfficiency = 50
+            };
+        }
+
         [Test]
         public void EnergyTypeInitialization_Gas()
         {
             PowerPlant powerPlant = new PowerPlant();
 
             powerPlant.Type = "gasfired";
-            Assert.AreEqual(powerPlant.EnergyType, EnergySources.Gas);
+            Assert.AreEqual(powerPlant.EnergySource, EnergySources.Gas);
         }
 
         [Test]
@@ -23,7 +37,7 @@ namespace PowerplantCodingChallenge.Test.Energy.Types
             PowerPlant powerPlant = new PowerPlant();
 
             powerPlant.Type = "turbojet";
-            Assert.AreEqual(powerPlant.EnergyType, EnergySources.Kerosine);
+            Assert.AreEqual(powerPlant.EnergySource, EnergySources.Kerosine);
         }
 
         [Test]
@@ -32,7 +46,7 @@ namespace PowerplantCodingChallenge.Test.Energy.Types
             PowerPlant powerPlant = new PowerPlant();
 
             powerPlant.Type = "windturbine";
-            Assert.AreEqual(powerPlant.EnergyType, EnergySources.Wind);
+            Assert.AreEqual(powerPlant.EnergySource, EnergySources.Wind);
         }
 
         [Test]
@@ -41,7 +55,35 @@ namespace PowerplantCodingChallenge.Test.Energy.Types
             PowerPlant powerPlant = new PowerPlant();
 
             powerPlant.Type = "qslmgj";
-            Assert.AreEqual(powerPlant.EnergyType, EnergySources.Unknown);
+            Assert.AreEqual(powerPlant.EnergySource, EnergySources.Unknown);
+        }
+
+        [Test]
+        public void Init_Gas()
+        {
+            PowerPlant powerPlant = new PowerPlant() { Efficiency = 0.5d, EnergySource = EnergySources.Gas };
+
+            powerPlant.Init(_energyMetrics);
+            Assert.AreEqual(30, powerPlant.CostPerMW);
+        }
+
+        [Test]
+        public void Init_Kersosine()
+        {
+            PowerPlant powerPlant = new PowerPlant() { Efficiency = 0.5d, EnergySource = EnergySources.Kerosine };
+
+            powerPlant.Init(_energyMetrics);
+            Assert.AreEqual(100, powerPlant.CostPerMW);
+        }
+
+        [Test]
+        public void Init_Wind()
+        {
+            PowerPlant powerPlant = new PowerPlant() { Efficiency = 1, EnergySource = EnergySources.Wind, PMax = 100 };
+
+            powerPlant.Init(_energyMetrics);
+            Assert.AreEqual(0, powerPlant.CostPerMW);
+            Assert.AreEqual(60, powerPlant.PMax);
         }
     }
 }

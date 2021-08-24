@@ -19,7 +19,10 @@ namespace PowerplantCodingChallenge.Controllers
         [HttpPost]
         public ActionResult<PowerPlantUsage[]> CalculateProductionPlan([FromBody] ProductionPlan input) 
         {
+            input.PowerPlants.ForEach(x => x.Init(input.Fuels));
+
             List<PowerPlantUsage> Response = new List<PowerPlantUsage>();
+
 
             foreach (PowerPlant powerPlant in input.PowerPlants)
             {
