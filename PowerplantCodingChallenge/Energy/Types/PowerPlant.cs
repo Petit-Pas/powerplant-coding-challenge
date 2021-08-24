@@ -45,6 +45,8 @@ namespace PowerplantCodingChallenge.Energy.Types
             {
                 // computing the new max value according to the current wind
                 PMax = PMax * 60 / 100;
+                // since wind turbines can't be partially on, PMin is equal to PMax
+                PMin = PMax;
                 CostPerMW = 0;
             }
             else
@@ -57,6 +59,17 @@ namespace PowerplantCodingChallenge.Energy.Types
                 };
                 CostPerMW = ResourceCostPerMw / Efficiency;
             }
+        }
+
+        public MinimalistPowerPlant GetMinimalist()
+        {
+            return new MinimalistPowerPlant()
+            {
+                CostPerMW = this.CostPerMW,
+                IsTurnedOn = false,
+                PMax = this.PMax,
+                PMin = this.PMin,
+            };
         }
     }
 }

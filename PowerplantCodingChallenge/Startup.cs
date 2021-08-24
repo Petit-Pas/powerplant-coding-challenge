@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using PowerplantCodingChallenge.Energy.Tools;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,6 +27,11 @@ namespace PowerplantCodingChallenge
         {
             services.AddControllers()
                         .AddNewtonsoftJson();
+
+            services.AddSingleton<IProductionPlanPlanner, BruteForceProductionPlanPlanner>();
+
+            services.AddLogging(x => x.AddConsole());
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

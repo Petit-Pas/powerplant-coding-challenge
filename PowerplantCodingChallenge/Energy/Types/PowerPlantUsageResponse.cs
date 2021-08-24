@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace PowerplantCodingChallenge.Energy.Types
 {
-    public class PowerPlantUsage
+    public class PowerPlantUsageResponse
     {
         public string Name { get; set; }
 

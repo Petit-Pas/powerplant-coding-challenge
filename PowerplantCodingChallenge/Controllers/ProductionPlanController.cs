@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using PowerplantCodingChallenge.Energy.Tools;
 using PowerplantCodingChallenge.Energy.Types;
 using System;
 using System.Collections.Generic;
@@ -11,28 +12,22 @@ namespace PowerplantCodingChallenge.Controllers
     [Route("[controller]")]
     public class ProductionPlanController : Controller
     {
+        private readonly IProductionPlanPlanner planner;
+
+        public ProductionPlanController(IProductionPlanPlanner planner)
+        {
+            this.planner = planner;
+        }
+
         public IActionResult Index()
         {
             return View();
         }
 
         [HttpPost]
-        public ActionResult<PowerPlantUsage[]> CalculateProductionPlan([FromBody] ProductionPlan input) 
+        public ActionResult<PowerPlantUsageResponse[]> CalculateProductionPlan([FromBody] ProductionPlanInput input) 
         {
-            input.PowerPlants.ForEach(x => x.Init(input.Fuels));
-
-            List<PowerPlantUsage> Response = new List<PowerPlantUsage>();
-
-
-            foreach (PowerPlant powerPlant in input.PowerPlants)
-            {
-                Response.Add(new PowerPlantUsage()
-                {
-                    Name = powerPlant.Name,
-                    Power = 0.1f,
-                });
-            }
-            return Ok(Response.ToArray());
+            return Ok(planner.ComputerBestPowerUsage(input));
         }
     }
 }

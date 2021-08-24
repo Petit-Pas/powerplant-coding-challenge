@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace PowerplantCodingChallenge.Energy.Types
 {
-    public class ProductionPlan
+    public class ProductionPlanInput
     {
         public int Load { get; set; }
         public EnergyMetrics Fuels { get; set; }
