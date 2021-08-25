@@ -10,6 +10,14 @@ using System.Threading.Tasks;
 
 namespace PowerplantCodingChallenge.Energy.Tools
 {
+    /// <summary>
+    ///     The BruteForcePlanner will generate every possibility in term of ON/OFF for power plant 
+    ///         => having 6 powerplant will generate 2^6 scenarios
+    ///     It will then eliminate the scenarios that could not work, and finetune the remaining to find the optimized cost of each
+    ///     
+    ///     The idea behind the ON/OFF delimitation is separating the "fixed" (PMin) and "maxed" (Pmax) production (PMin) for each scenario
+    ///         You then have a Min and a Max for a complete scenario and not just a given PowerPlant.
+    /// </summary>
     public class BruteForceProductionPlanPlanner : IProductionPlanPlanner
     {
         private readonly ILogger<BruteForceProductionPlanPlanner> logger;
@@ -27,17 +35,32 @@ namespace PowerplantCodingChallenge.Energy.Tools
             productionPlan.PowerPlants = productionPlan.PowerPlants.OrderBy(x => x.CostPerMW).ToList();
             List<ProductionPlanScenario> scenarios = GenerateAllPossibilities(productionPlan.PowerPlants);
 
+            //DumpPossibilities(scenarios, productionPlan);
+
             RemoveUnusableScenarios(scenarios, productionPlan.Load);
 
-            DumpPossibilities(scenarios, productionPlan);
+            //DumpPossibilities(scenarios, productionPlan);
+
+            Stopwatch fineTuneStopwatch = Stopwatch.StartNew();
+            scenarios.ForEach(x => x.FineTune(productionPlan.Load));
+            fineTuneStopwatch.Stop();
+            logger.LogInformation($"It took {fineTuneStopwatch.ElapsedMilliseconds}ms to finetune all models");
+
+            //DumpPossibilities(scenarios, productionPlan);
+
+            scenarios.ForEach(x => x.ComputeTotalCost());
+
+            //DumpPossibilities(scenarios, productionPlan, true);
+
+            scenarios = scenarios.OrderBy(x => x.TotalCost).ToList();
 
             List<PowerPlantUsageResponse> Response = new List<PowerPlantUsageResponse>();
-            foreach (PowerPlant powerPlant in productionPlan.PowerPlants)
+            for (int i = 0; i != productionPlan.PowerPlants.Count; i += 1)
             {
                 Response.Add(new PowerPlantUsageResponse()
                 {
-                    Name = powerPlant.Name,
-                    Power = 0.1f,
+                    Name = productionPlan.PowerPlants[i].Name,
+                    Power = Math.Round(scenarios[0].PowerPlants[i].PDelivered, 1),
                 });
             }
 
@@ -46,7 +69,7 @@ namespace PowerplantCodingChallenge.Energy.Tools
             return Response.ToArray();
         }
 
-        private void RemoveUnusableScenarios(List<ProductionPlanScenario> possibilities, int load)
+        private void RemoveUnusableScenarios(List<ProductionPlanScenario> possibilities, double load)
         {
             int amount = possibilities.Count;
             possibilities.RemoveAll(x => x.PMax < load || x.PMin > load);
@@ -74,6 +97,7 @@ namespace PowerplantCodingChallenge.Energy.Tools
                     if ((i & (1 << j)) != 0)
                     {
                         minimalistPowerPlant.IsTurnedOn = true;
+                        minimalistPowerPlant.PDelivered = minimalistPowerPlant.PMin;
                     }
                     productionPlanScenario.PowerPlants.Add(minimalistPowerPlant);
                 }
@@ -87,7 +111,8 @@ namespace PowerplantCodingChallenge.Energy.Tools
             return productionPlanScenarios;
         }
 
-        private void DumpPossibilities(List<ProductionPlanScenario> possibilities, ProductionPlanInput productionPlan)
+        // for debug purposes
+        private void DumpPossibilities(List<ProductionPlanScenario> possibilities, ProductionPlanInput productionPlan, bool details = false)
         {
             string names = String.Join(", ", productionPlan.PowerPlants.Select(x => x.Name));
             logger.LogDebug($"Order of plants: {names}");
@@ -98,7 +123,14 @@ namespace PowerplantCodingChallenge.Energy.Tools
                 {
                     states += powerPlant.IsTurnedOn ? "1" : "0";
                 }
-                logger.LogDebug(states + $" could give between {scenario.PMin} and {scenario.PMax}");
+                logger.LogDebug(states + $" could give between {scenario.PMin} and {scenario.PMax} and currently gives {scenario.PDelivered} for a cost of {scenario.TotalCost}");
+                if (details)
+                {
+                    foreach (MinimalistPowerPlant powerPlant in scenario.PowerPlants)
+                    {
+                        logger.LogDebug($"{powerPlant.PDelivered}");
+                    }
+                }
             }
         }
     }

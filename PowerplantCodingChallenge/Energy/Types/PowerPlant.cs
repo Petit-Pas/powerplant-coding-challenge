@@ -44,7 +44,7 @@ namespace PowerplantCodingChallenge.Energy.Types
             if (EnergySource == EnergySources.Wind)
             {
                 // computing the new max value according to the current wind
-                PMax = PMax * 60 / 100;
+                PMax = PMax * energyMetrics.WindEfficiency / 100;
                 // since wind turbines can't be partially on, PMin is equal to PMax
                 PMin = PMax;
                 CostPerMW = 0;

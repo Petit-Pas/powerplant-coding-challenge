@@ -7,7 +7,7 @@ namespace PowerplantCodingChallenge.Energy.Types
 {
     public class ProductionPlanInput
     {
-        public int Load { get; set; }
+        public double Load { get; set; }
         public EnergyMetrics Fuels { get; set; }
         public List<PowerPlant> PowerPlants { get; set; }
     }

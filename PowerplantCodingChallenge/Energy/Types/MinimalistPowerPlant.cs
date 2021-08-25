@@ -9,6 +9,7 @@ namespace PowerplantCodingChallenge.Energy.Types
     {
         public double PMax { get; set; }
         public double PMin { get; set; }
+        public double PDelivered { get; set; }
         public double CostPerMW { get; set; }
         public bool IsTurnedOn { get; set; }
     }
