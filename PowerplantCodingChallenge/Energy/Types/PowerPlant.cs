@@ -26,7 +26,7 @@ namespace PowerplantCodingChallenge.Energy.Types
                         EnergySource = EnergySources.Wind;
                         break;
                     default:
-                        EnergySource = EnergySources.Unknown;
+                        throw new InvalidEnergyTypeException($"Unrecognized energy type '{value}'");
                         break;
                 }
             }
@@ -55,7 +55,7 @@ namespace PowerplantCodingChallenge.Energy.Types
                 {
                     EnergySources.Gas => energyMetrics.GasCost,
                     EnergySources.Kerosine => energyMetrics.KersosineCost,
-                    _ => throw new InvalidEnergyTypeException(),
+                    _ => throw new InvalidEnergyTypeException($"You have to provide an energy type for powerplant {Name}"),
                 };
                 CostPerMW = ResourceCostPerMw / Efficiency;
             }

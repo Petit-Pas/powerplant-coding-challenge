@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using PowerplantCodingChallenge.Energy.Exceptions;
 using PowerplantCodingChallenge.Energy.Types;
 using System;
 using System.Collections;
@@ -38,6 +39,8 @@ namespace PowerplantCodingChallenge.Energy.Tools
             //DumpPossibilities(scenarios, productionPlan);
 
             RemoveUnusableScenarios(scenarios, productionPlan.Load);
+            if (scenarios.Count == 0)
+                throw new InvalidLoadException("Found no scenario to provide the asked load");
 
             //DumpPossibilities(scenarios, productionPlan);
 

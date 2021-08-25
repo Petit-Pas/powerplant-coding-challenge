@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using PowerplantCodingChallenge.Energy.Exceptions;
 using PowerplantCodingChallenge.Energy.Tools;
 using PowerplantCodingChallenge.Energy.Types;
 using System;
@@ -27,7 +28,18 @@ namespace PowerplantCodingChallenge.Controllers
         [HttpPost]
         public ActionResult<PowerPlantUsageResponse[]> CalculateProductionPlan([FromBody] ProductionPlanInput input) 
         {
-            return Ok(planner.ComputerBestPowerUsage(input));
+            try
+            {
+                return Ok(planner.ComputerBestPowerUsage(input));
+            }
+            catch (InvalidLoadException e)
+            {
+                return BadRequest(e.Message);
+            }
+            catch (InvalidEnergyTypeException e)
+            {
+                return BadRequest(e.Message);
+            }
         }
     }
 }
