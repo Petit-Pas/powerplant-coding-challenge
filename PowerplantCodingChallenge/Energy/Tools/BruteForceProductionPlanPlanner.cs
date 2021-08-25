@@ -36,24 +36,18 @@ namespace PowerplantCodingChallenge.Energy.Tools
             productionPlan.PowerPlants = productionPlan.PowerPlants.OrderBy(x => x.CostPerMW).ToList();
             List<ProductionPlanScenario> scenarios = GenerateAllPossibilities(productionPlan.PowerPlants);
 
-            //DumpPossibilities(scenarios, productionPlan);
-
             RemoveUnusableScenarios(scenarios, productionPlan.Load);
             if (scenarios.Count == 0)
                 throw new InvalidLoadException("Found no scenario to provide the asked load");
-
-            //DumpPossibilities(scenarios, productionPlan);
 
             Stopwatch fineTuneStopwatch = Stopwatch.StartNew();
             scenarios.ForEach(x => x.FineTune(productionPlan.Load));
             fineTuneStopwatch.Stop();
             logger.LogInformation($"It took {fineTuneStopwatch.ElapsedMilliseconds}ms to finetune all models");
 
-            //DumpPossibilities(scenarios, productionPlan);
-
             scenarios.ForEach(x => x.ComputeTotalCost());
 
-            //DumpPossibilities(scenarios, productionPlan, true);
+            DumpScenarios(scenarios, productionPlan, true);
 
             scenarios = scenarios.OrderBy(x => x.TotalCost).ToList();
 
@@ -79,7 +73,7 @@ namespace PowerplantCodingChallenge.Energy.Tools
             logger.LogInformation($"After removing impossible possibilities, {possibilities.Count} of the {amount} initial remain");
         }
 
-        private List<ProductionPlanScenario> GenerateAllPossibilities(List<PowerPlant> powerPlants)
+        protected virtual List<ProductionPlanScenario> GenerateAllPossibilities(List<PowerPlant> powerPlants)
         {
             Stopwatch stopwatch = Stopwatch.StartNew();
             List<ProductionPlanScenario> productionPlanScenarios = new List<ProductionPlanScenario>();
@@ -115,7 +109,7 @@ namespace PowerplantCodingChallenge.Energy.Tools
         }
 
         // for debug purposes
-        private void DumpPossibilities(List<ProductionPlanScenario> possibilities, ProductionPlanInput productionPlan, bool details = false)
+        private void DumpScenarios(List<ProductionPlanScenario> possibilities, ProductionPlanInput productionPlan, bool details = false)
         {
             string names = String.Join(", ", productionPlan.PowerPlants.Select(x => x.Name));
             logger.LogDebug($"Order of plants: {names}");

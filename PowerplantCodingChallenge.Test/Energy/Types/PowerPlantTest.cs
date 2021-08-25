@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using NUnit.Framework;
+using PowerplantCodingChallenge.Energy.Exceptions;
 using PowerplantCodingChallenge.Energy.Types;
 
 namespace PowerplantCodingChallenge.Test.Energy.Types
@@ -54,8 +55,7 @@ namespace PowerplantCodingChallenge.Test.Energy.Types
         {
             PowerPlant powerPlant = new PowerPlant();
 
-            powerPlant.Type = "qslmgj";
-            Assert.AreEqual(powerPlant.EnergySource, EnergySources.Unknown);
+            Assert.Throws(typeof(InvalidEnergyTypeException), () => powerPlant.Type = "qslmgj");
         }
 
         [Test]
@@ -83,7 +83,7 @@ namespace PowerplantCodingChallenge.Test.Energy.Types
 
             powerPlant.Init(_energyMetrics);
             Assert.AreEqual(0, powerPlant.CostPerMW);
-            Assert.AreEqual(60, powerPlant.PMax);
+            Assert.AreEqual(50, powerPlant.PMax);
         }
     }
 }

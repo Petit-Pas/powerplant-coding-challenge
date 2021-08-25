@@ -28,7 +28,7 @@ namespace PowerplantCodingChallenge
             services.AddControllers()
                         .AddNewtonsoftJson();
 
-            services.AddSingleton<IProductionPlanPlanner, BruteForceProductionPlanPlanner>();
+            services.AddSingleton<IProductionPlanPlanner, BruteForceLessScenariosProductionPlanPlanner>();
 
             services.AddLogging(x => x.AddConsole());
 

@@ -25,6 +25,7 @@ namespace PowerplantCodingChallenge.Controllers
             return View();
         }
 
+
         [HttpPost]
         public ActionResult<PowerPlantUsageResponse[]> CalculateProductionPlan([FromBody] ProductionPlanInput input) 
         {
