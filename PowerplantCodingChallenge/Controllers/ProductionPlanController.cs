@@ -31,7 +31,7 @@ namespace PowerplantCodingChallenge.Controllers
         {
             try
             {
-                return Ok(planner.ComputerBestPowerUsage(input));
+                return Ok(planner.ComputeBestPowerUsage(input));
             }
             catch (InvalidLoadException e)
             {

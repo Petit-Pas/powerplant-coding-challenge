@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace PowerplantCodingChallenge.Energy.Types
 {
-    public enum EnergySources
+    public enum EnergySource
     {
         Gas,
         Kerosine,

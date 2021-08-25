@@ -8,6 +8,19 @@ namespace PowerplantCodingChallenge.Energy.Types
 {
     public class PowerPlant
     {
+        public PowerPlant()
+        {
+        }
+
+        public PowerPlant(string name, EnergySource energySource, double efficiency, double pMin, double pMax)
+        {
+            Name = name;
+            EnergySource = energySource;
+            Efficiency = efficiency;
+            PMax = pMax;
+            PMin = pMin;
+        }
+
         public string Name { get; set; }
 
         public string Type
@@ -17,13 +30,13 @@ namespace PowerplantCodingChallenge.Energy.Types
                 switch (value)
                 {
                     case "gasfired":
-                        EnergySource = EnergySources.Gas;
+                        EnergySource = EnergySource.Gas;
                         break;
                     case "turbojet":
-                        EnergySource = EnergySources.Kerosine;
+                        EnergySource = EnergySource.Kerosine;
                         break;
                     case "windturbine":
-                        EnergySource = EnergySources.Wind;
+                        EnergySource = EnergySource.Wind;
                         break;
                     default:
                         throw new InvalidEnergyTypeException($"Unrecognized energy type '{value}'");
@@ -31,7 +44,7 @@ namespace PowerplantCodingChallenge.Energy.Types
                 }
             }
         }
-        public EnergySources EnergySource { get; set; } = EnergySources.Unknown;
+        public EnergySource EnergySource { get; set; } = EnergySource.Unknown;
 
         public double Efficiency { get; set; }
         public double PMin { get; set; }
@@ -41,7 +54,7 @@ namespace PowerplantCodingChallenge.Energy.Types
         // will compute the specific values for wind / fossil energies
         public void Init(EnergyMetrics energyMetrics)
         { 
-            if (EnergySource == EnergySources.Wind)
+            if (EnergySource == EnergySource.Wind)
             {
                 // computing the new max value according to the current wind
                 PMax = PMax * energyMetrics.WindEfficiency / 100;
@@ -53,8 +66,8 @@ namespace PowerplantCodingChallenge.Energy.Types
             {
                 double ResourceCostPerMw = EnergySource switch
                 {
-                    EnergySources.Gas => energyMetrics.GasCost,
-                    EnergySources.Kerosine => energyMetrics.KersosineCost,
+                    EnergySource.Gas => energyMetrics.GasCost,
+                    EnergySource.Kerosine => energyMetrics.KersosineCost,
                     _ => throw new InvalidEnergyTypeException($"You have to provide an energy type for powerplant {Name}"),
                 };
                 CostPerMW = ResourceCostPerMw / Efficiency;

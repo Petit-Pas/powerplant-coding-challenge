@@ -28,52 +28,63 @@ namespace PowerplantCodingChallenge.Energy.Tools
             this.logger = logger;
         }
 
-        public PowerPlantUsageResponse[] ComputerBestPowerUsage(ProductionPlanInput productionPlan)
+        public PowerPlantUsageResponse[] ComputeBestPowerUsage(ProductionPlanInput productionPlan)
         {
             Stopwatch stopwatch = Stopwatch.StartNew();
 
+            // generate scenarios
             productionPlan.PowerPlants.ForEach(x => x.Init(productionPlan.Fuels));
             productionPlan.PowerPlants = productionPlan.PowerPlants.OrderBy(x => x.CostPerMW).ToList();
             List<ProductionPlanScenario> scenarios = GenerateAllPossibilities(productionPlan.PowerPlants);
 
+            // filter useful ones
             RemoveUnusableScenarios(scenarios, productionPlan.Load);
             if (scenarios.Count == 0)
                 throw new InvalidLoadException("Found no scenario to provide the asked load");
 
+            // finetune them to actually correspond to the given payload
             Stopwatch fineTuneStopwatch = Stopwatch.StartNew();
             scenarios.ForEach(x => x.FineTune(productionPlan.Load));
             fineTuneStopwatch.Stop();
             logger.LogInformation($"It took {fineTuneStopwatch.ElapsedMilliseconds}ms to finetune all models");
 
+            // compute each cost
             scenarios.ForEach(x => x.ComputeTotalCost());
 
-            DumpScenarios(scenarios, productionPlan, true);
+            DumpScenarios(scenarios, productionPlan, false);
 
+            // Create response
             scenarios = scenarios.OrderBy(x => x.TotalCost).ToList();
-
-            List<PowerPlantUsageResponse> Response = new List<PowerPlantUsageResponse>();
-            for (int i = 0; i != productionPlan.PowerPlants.Count; i += 1)
-            {
-                Response.Add(new PowerPlantUsageResponse()
-                {
-                    Name = productionPlan.PowerPlants[i].Name,
-                    Power = Math.Round(scenarios[0].PowerPlants[i].PDelivered, 1),
-                });
-            }
+            var response = FormatResponse(productionPlan, scenarios.First());
 
             stopwatch.Stop();
             logger.LogInformation($"Total process took {stopwatch.ElapsedMilliseconds}ms.");
-            return Response.ToArray();
+
+            return response.ToArray();
         }
 
-        private void RemoveUnusableScenarios(List<ProductionPlanScenario> possibilities, double load)
+        public PowerPlantUsageResponse[] FormatResponse(ProductionPlanInput productionPlan, ProductionPlanScenario productionPlanScenario)
         {
-            int amount = possibilities.Count;
-            possibilities.RemoveAll(x => x.PMax < load || x.PMin > load);
-            logger.LogInformation($"After removing impossible possibilities, {possibilities.Count} of the {amount} initial remain");
+            List<PowerPlantUsageResponse> result = new List<PowerPlantUsageResponse>();
+            for (int i = 0; i != productionPlan.PowerPlants.Count; i += 1)
+            {
+                result.Add(new PowerPlantUsageResponse()
+                {
+                    Name = productionPlan.PowerPlants[i].Name,
+                    Power = Math.Round(productionPlanScenario.PowerPlants[i].PDelivered, 1),
+                });
+            }
+            return result.ToArray();
         }
 
-        protected virtual List<ProductionPlanScenario> GenerateAllPossibilities(List<PowerPlant> powerPlants)
+        public void RemoveUnusableScenarios(List<ProductionPlanScenario> scenarios, double load)
+        {
+            int amount = scenarios.Count;
+            scenarios.RemoveAll(x => x.PMax < load || x.PMin > load);
+            logger.LogInformation($"After removing impossible possibilities, {scenarios.Count} of the {amount} initial remain");
+        }
+
+        public virtual List<ProductionPlanScenario> GenerateAllPossibilities(List<PowerPlant> powerPlants)
         {
             Stopwatch stopwatch = Stopwatch.StartNew();
             List<ProductionPlanScenario> productionPlanScenarios = new List<ProductionPlanScenario>();
@@ -109,7 +120,7 @@ namespace PowerplantCodingChallenge.Energy.Tools
         }
 
         // for debug purposes
-        private void DumpScenarios(List<ProductionPlanScenario> possibilities, ProductionPlanInput productionPlan, bool details = false)
+        protected void DumpScenarios(List<ProductionPlanScenario> possibilities, ProductionPlanInput productionPlan, bool details = false)
         {
             string names = String.Join(", ", productionPlan.PowerPlants.Select(x => x.Name));
             logger.LogDebug($"Order of plants: {names}");

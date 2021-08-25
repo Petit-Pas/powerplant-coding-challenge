@@ -4,6 +4,6 @@ namespace PowerplantCodingChallenge.Energy.Tools
 {
     public interface IProductionPlanPlanner
     {
-        public PowerPlantUsageResponse[] ComputerBestPowerUsage(ProductionPlanInput productionPlan);
+        public PowerPlantUsageResponse[] ComputeBestPowerUsage(ProductionPlanInput productionPlan);
     }
 }

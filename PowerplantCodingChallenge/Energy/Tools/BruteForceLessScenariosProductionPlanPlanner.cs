@@ -19,7 +19,7 @@ namespace PowerplantCodingChallenge.Energy.Tools
 
         // this overriden method will generate less scenarios since it will use the same ON/OFF mechanic than the original BruteForceProductionPlanPlanner,
         //      but it won't be generating scenarios in which powerPlants with a PMin of 0 are turned off, since it has no 'cost' to turn it on
-        protected override List<ProductionPlanScenario> GenerateAllPossibilities(List<PowerPlant> powerPlants)
+        public override List<ProductionPlanScenario> GenerateAllPossibilities(List<PowerPlant> powerPlants)
         {
             Stopwatch stopwatch = Stopwatch.StartNew();
             // we only take into account the powerPlants with a PMin != 0, others will be added as ON later
@@ -36,7 +36,7 @@ namespace PowerplantCodingChallenge.Energy.Tools
                 // to which we add every non ignored powerPlant
                 for (int j = 0; j != nonIgnored.Count; j += 1)
                 {
-                    MinimalistPowerPlant minimalistPowerPlant = powerPlants[j].GetMinimalist();
+                    MinimalistPowerPlant minimalistPowerPlant = nonIgnored[j].GetMinimalist();
                     // if the bit at index j of i is true, we turn the powerPlant on
                     // since i will range from 0 to 2^nonIgnored.Count, it will automatically generate all possibilities
                     if ((i & (1 << j)) != 0)
