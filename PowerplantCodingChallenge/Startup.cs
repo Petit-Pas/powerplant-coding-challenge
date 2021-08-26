@@ -5,7 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using PowerplantCodingChallenge.Energy.Tools;
+using PowerplantCodingChallenge.Services.Planners;
 using System;
 using System.Collections.Generic;
 using System.Linq;

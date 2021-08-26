@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31205.134
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PowerplantCodingChallenge", "PowerplantCodingChallenge\PowerplantCodingChallenge.csproj", "{FDF72D4F-DED3-46BC-8E23-65F54A2B5C00}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PowerplantCodingChallenge.API", "PowerplantCodingChallenge\PowerplantCodingChallenge.API.csproj", "{FDF72D4F-DED3-46BC-8E23-65F54A2B5C00}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PowerplantCodingChallenge.Test", "PowerplantCodingChallenge.Test\PowerplantCodingChallenge.Test.csproj", "{E503128B-6C95-4F61-B806-1C49CB80DF82}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PowerplantCodingChallenge.Test", "PowerplantCodingChallenge.Test\PowerplantCodingChallenge.Test.csproj", "{E503128B-6C95-4F61-B806-1C49CB80DF82}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

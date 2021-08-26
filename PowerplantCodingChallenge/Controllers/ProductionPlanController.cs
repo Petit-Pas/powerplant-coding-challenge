@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using PowerplantCodingChallenge.Energy.Exceptions;
-using PowerplantCodingChallenge.Energy.Tools;
-using PowerplantCodingChallenge.Energy.Types;
+using PowerplantCodingChallenge.Models;
+using PowerplantCodingChallenge.Models.Exceptions;
+using PowerplantCodingChallenge.Services.Planners;
 using System;
 using System.Collections.Generic;
 using System.Linq;
