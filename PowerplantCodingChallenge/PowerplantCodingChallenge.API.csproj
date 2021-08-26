@@ -9,11 +9,5 @@
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="5.0.0" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Energy\Exceptions\" />
-    <Folder Include="Energy\Tools\" />
-    <Folder Include="Energy\Types\" />
-  </ItemGroup>
-
 
 </Project>

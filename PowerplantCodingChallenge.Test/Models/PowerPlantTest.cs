@@ -63,7 +63,7 @@ namespace PowerplantCodingChallenge.Test.Models
         {
             PowerPlant powerPlant = new PowerPlant() { Efficiency = 0.5d, EnergySource = EnergySource.Gas };
 
-            powerPlant.Init(_energyMetrics);
+            powerPlant.Init(_energyMetrics, false);
             Assert.AreEqual(30, powerPlant.CostPerMW);
         }
 
@@ -72,7 +72,7 @@ namespace PowerplantCodingChallenge.Test.Models
         {
             PowerPlant powerPlant = new PowerPlant() { Efficiency = 0.5d, EnergySource = EnergySource.Kerosine };
 
-            powerPlant.Init(_energyMetrics);
+            powerPlant.Init(_energyMetrics, false);
             Assert.AreEqual(100, powerPlant.CostPerMW);
         }
 
@@ -81,7 +81,7 @@ namespace PowerplantCodingChallenge.Test.Models
         {
             PowerPlant powerPlant = new PowerPlant() { Efficiency = 1, EnergySource = EnergySource.Wind, PMax = 100 };
 
-            powerPlant.Init(_energyMetrics);
+            powerPlant.Init(_energyMetrics, false);
             Assert.AreEqual(0, powerPlant.CostPerMW);
             Assert.AreEqual(50, powerPlant.PMax);
         }

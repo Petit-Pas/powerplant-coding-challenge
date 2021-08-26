@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -19,6 +20,7 @@ namespace PowerplantCodingChallenge.Models
             PowerPlants = powerPlants;
         }
 
+        [JsonProperty(PropertyName = "Load")]
         public double RequiredLoad { get; set; }
         public EnergyMetrics Fuels { get; set; }
         public List<PowerPlant> PowerPlants { get; set; }

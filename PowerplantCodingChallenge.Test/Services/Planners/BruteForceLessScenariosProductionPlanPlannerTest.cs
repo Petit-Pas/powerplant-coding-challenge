@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using PowerplantCodingChallenge.Models;
@@ -18,12 +19,19 @@ namespace PowerplantCodingChallenge.Test.Services.Planners
         [OneTimeSetUp]
         public void OneTimeSetup()
         {
-            _planner = new BruteForceLessScenariosProductionPlanPlanner(new Mock<ILogger<BruteForceLessScenariosProductionPlanPlanner>>().Object);
+            Mock<ILogger<BruteForceLessScenariosProductionPlanPlanner>> logger = new Mock<ILogger<BruteForceLessScenariosProductionPlanPlanner>>();
+            Mock<IConfigurationSection> configurationSection = new Mock<IConfigurationSection>();
+            configurationSection.SetupGet(x => x.Value).Returns("false");
+            Mock<IConfiguration> configuration = new Mock<IConfiguration>();
+            configuration.Setup(x => x.GetSection(It.IsAny<string>()))
+                    .Returns(configurationSection.Object);
+            _planner = new BruteForceLessScenariosProductionPlanPlanner(logger.Object, configuration.Object);
         }
 
         [Test]
         public void GenerateAllPossibilities()
         {
+            // arrange
             List<PowerPlant> powerPlants = new List<PowerPlant>()
             {
                 new PowerPlant() { PMin = 150 },
@@ -32,8 +40,11 @@ namespace PowerplantCodingChallenge.Test.Services.Planners
                 new PowerPlant() { PMin = 150 },
                 new PowerPlant() { PMin = 0 },
             };
+
+            // act
             List<ProductionPlanScenario> result = _planner.GenerateAllPossibilities(powerPlants);
 
+            // assert
             Assert.AreEqual(Math.Pow(2, powerPlants.Count - 1), result.Count);
             int amountON = 0;
             result.ForEach(x => amountON += x.PowerPlants.Where(x => x.IsTurnedOn).Count());

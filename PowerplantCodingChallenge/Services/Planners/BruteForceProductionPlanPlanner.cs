@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using PowerplantCodingChallenge.Models;
 using PowerplantCodingChallenge.Models.Exceptions;
 using System;
@@ -22,10 +23,12 @@ namespace PowerplantCodingChallenge.Services.Planners
     public class BruteForceProductionPlanPlanner : IProductionPlanPlanner
     {
         private readonly ILogger<BruteForceProductionPlanPlanner> logger;
+        private readonly IConfiguration configuration;
 
-        public BruteForceProductionPlanPlanner(ILogger<BruteForceProductionPlanPlanner> logger)
+        public BruteForceProductionPlanPlanner(ILogger<BruteForceProductionPlanPlanner> logger, IConfiguration configuration)
         {
             this.logger = logger;
+            this.configuration = configuration;
         }
 
         public PowerPlantUsageResponse[] ComputeBestPowerUsage(ProductionPlanInput productionPlan)
@@ -33,7 +36,8 @@ namespace PowerplantCodingChallenge.Services.Planners
             Stopwatch stopwatch = Stopwatch.StartNew();
 
             // generate scenarios
-            productionPlan.PowerPlants.ForEach(x => x.Init(productionPlan.Fuels));
+            bool co2Enabled = bool.Parse(configuration.GetSection("PowerPlantCodingChallenge:CO2Enabled").Value);
+            productionPlan.PowerPlants.ForEach(x => x.Init(productionPlan.Fuels, co2Enabled));
             productionPlan.PowerPlants = productionPlan.PowerPlants.OrderBy(x => x.CostPerMW).ToList();
             List<ProductionPlanScenario> scenarios = GenerateAllPossibilities(productionPlan.PowerPlants);
 

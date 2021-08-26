@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using PowerplantCodingChallenge.Models;
 using System;
 using System.Collections.Generic;
@@ -11,10 +12,13 @@ namespace PowerplantCodingChallenge.Services.Planners
     public class BruteForceLessScenariosProductionPlanPlanner : BruteForceProductionPlanPlanner
     {
         private readonly ILogger<BruteForceLessScenariosProductionPlanPlanner> logger;
+        private readonly IConfiguration configuration;
 
-        public BruteForceLessScenariosProductionPlanPlanner(ILogger<BruteForceLessScenariosProductionPlanPlanner> logger) : base(logger)
+        public BruteForceLessScenariosProductionPlanPlanner(ILogger<BruteForceLessScenariosProductionPlanPlanner> logger, IConfiguration configuration) 
+            : base(logger, configuration)
         {
             this.logger = logger;
+            this.configuration = configuration;
         }
 
         // this overriden method will generate less scenarios since it will use the same ON/OFF mechanic than the original BruteForceProductionPlanPlanner,

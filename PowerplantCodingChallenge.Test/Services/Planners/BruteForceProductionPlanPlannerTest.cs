@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using PowerplantCodingChallenge.Models;
@@ -18,7 +19,14 @@ namespace PowerplantCodingChallenge.Test.Services.Planners
         [OneTimeSetUp]
         public void OneTimeSetup()
         {
-            _planner = new BruteForceProductionPlanPlanner(new Mock<ILogger<BruteForceProductionPlanPlanner>>().Object);
+            Mock<ILogger<BruteForceProductionPlanPlanner>> logger = new Mock<ILogger<BruteForceProductionPlanPlanner>>();
+            Mock<IConfigurationSection> configurationSection = new Mock<IConfigurationSection>();
+            configurationSection.SetupGet(x => x.Value).Returns("false");
+            Mock<IConfiguration> configuration = new Mock<IConfiguration>();
+            configuration.Setup(x => x.GetSection(It.IsAny<string>()))
+                    .Returns(configurationSection.Object);
+
+            _planner = new BruteForceProductionPlanPlanner(logger.Object, configuration.Object);
         }
 
         [Test]

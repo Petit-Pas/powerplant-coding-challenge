@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using PowerplantCodingChallenge.Models;
@@ -18,12 +19,19 @@ namespace PowerplantCodingChallenge.Test.Services.Planners
         [OneTimeSetUp]
         public void OneTimeSetup()
         {
-            _planner = new BruteForceLessScenariosProductionPlanPlanner(new Mock<ILogger<BruteForceLessScenariosProductionPlanPlanner>>().Object);
+            Mock<ILogger<BruteForceLessScenariosProductionPlanPlanner>> logger = new Mock<ILogger<BruteForceLessScenariosProductionPlanPlanner>>();
+            Mock<IConfigurationSection> configurationSection = new Mock<IConfigurationSection>();
+            configurationSection.SetupGet(x => x.Value).Returns("false");
+            Mock<IConfiguration> configuration = new Mock<IConfiguration>();
+            configuration.Setup(x => x.GetSection(It.IsAny<string>()))
+                    .Returns(configurationSection.Object);
+            _planner = new BruteForceLessScenariosProductionPlanPlanner(logger.Object, configuration.Object);
         }
 
         [Test]
         public void ComputeBestPowerUsage_ExamplePayload1_NoCO2()
         {
+            // arrange
             EnergyMetrics energyMetrics = new EnergyMetrics() { Co2 = 0, KersosineCost = 50.8, GasCost = 13.4, WindEfficiency = 60 };
             ProductionPlanInput productionPlan = new ProductionPlanInput(480, energyMetrics, new List<PowerPlant>()
             {
@@ -35,19 +43,23 @@ namespace PowerplantCodingChallenge.Test.Services.Planners
                 new("windpark2", EnergySource.Wind, 1, 0, 36),
             });
 
+            // act
             var result = _planner.ComputeBestPowerUsage(productionPlan).ToList();
 
+            // assert
             Assert.AreEqual(480, result.Select(x => x.Power).Sum());
-
-            double cost = 0;
-            productionPlan.PowerPlants.Where(x => x.EnergySource == EnergySource.Gas || x.EnergySource == EnergySource.Kerosine).ToList()
-                .ForEach(x => cost += x.CostPerMW * result.First(y => x.Name == y.Name).Power);
-            Assert.AreEqual(9314.264150943396, cost);
+            Assert.AreEqual(90, result.First(x => x.Name == "windpark1").Power);
+            Assert.AreEqual(21.6, result.First(x => x.Name == "windpark2").Power);
+            Assert.AreEqual(368.4, result.First(x => x.Name == "gasfiredbig1").Power);
+            Assert.AreEqual(0, result.First(x => x.Name == "gasfiredbig2").Power);
+            Assert.AreEqual(0, result.First(x => x.Name == "gasfiredsomewhatsmaller").Power);
+            Assert.AreEqual(0, result.First(x => x.Name == "tj1").Power);
         }
 
         [Test]
         public void ComputeBestPowerUsage_ExamplePayload2_NoCO2()
         {
+            // arrange
             EnergyMetrics energyMetrics = new EnergyMetrics() { Co2 = 0, KersosineCost = 50.8, GasCost = 13.4, WindEfficiency = 0 };
             ProductionPlanInput productionPlan = new ProductionPlanInput(480, energyMetrics, new List<PowerPlant>()
             {
@@ -59,19 +71,23 @@ namespace PowerplantCodingChallenge.Test.Services.Planners
                 new("windpark2", EnergySource.Wind, 1, 0, 36),
             });
 
+            // act
             var result = _planner.ComputeBestPowerUsage(productionPlan).ToList();
 
+            // assert
             Assert.AreEqual(480, result.Select(x => x.Power).Sum());
-
-            double cost = 0;
-            productionPlan.PowerPlants.Where(x => x.EnergySource == EnergySource.Gas || x.EnergySource == EnergySource.Kerosine).ToList()
-                .ForEach(x => cost += x.CostPerMW * result.First(y => x.Name == y.Name).Power);
-            Assert.AreEqual(12135.849056603774, cost);
+            Assert.AreEqual(0, result.First(x => x.Name == "windpark1").Power);
+            Assert.AreEqual(0, result.First(x => x.Name == "windpark2").Power);
+            Assert.AreEqual(380, result.First(x => x.Name == "gasfiredbig1").Power);
+            Assert.AreEqual(100, result.First(x => x.Name == "gasfiredbig2").Power);
+            Assert.AreEqual(0, result.First(x => x.Name == "gasfiredsomewhatsmaller").Power);
+            Assert.AreEqual(0, result.First(x => x.Name == "tj1").Power);
         }
 
         [Test]
         public void ComputeBestPowerUsage_ExamplePayload3_NoCO2()
         {
+            // arrange
             EnergyMetrics energyMetrics = new EnergyMetrics() { Co2 = 0, KersosineCost = 50.8, GasCost = 13.4, WindEfficiency = 60 };
             ProductionPlanInput productionPlan = new ProductionPlanInput(910, energyMetrics, new List<PowerPlant>()
             {
@@ -83,14 +99,17 @@ namespace PowerplantCodingChallenge.Test.Services.Planners
                 new("windpark2", EnergySource.Wind, 1, 0, 36),
             });
 
+            // act
             var result = _planner.ComputeBestPowerUsage(productionPlan).ToList();
 
+            // assert
             Assert.AreEqual(910, result.Select(x => x.Power).Sum());
-
-            double cost = 0;
-            productionPlan.PowerPlants.Where(x => x.EnergySource == EnergySource.Gas || x.EnergySource == EnergySource.Kerosine).ToList()
-                .ForEach(x => cost += x.CostPerMW * result.First(y => x.Name == y.Name).Power);
-            Assert.AreEqual(20185.96226415094, cost);
+            Assert.AreEqual(90, result.First(x => x.Name == "windpark1").Power);
+            Assert.AreEqual(21.6, result.First(x => x.Name == "windpark2").Power);
+            Assert.AreEqual(460, result.First(x => x.Name == "gasfiredbig1").Power);
+            Assert.AreEqual(338.4, result.First(x => x.Name == "gasfiredbig2").Power);
+            Assert.AreEqual(0, result.First(x => x.Name == "gasfiredsomewhatsmaller").Power);
+            Assert.AreEqual(0, result.First(x => x.Name == "tj1").Power);
         }
     }
 }

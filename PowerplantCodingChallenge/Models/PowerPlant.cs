@@ -54,8 +54,8 @@ namespace PowerplantCodingChallenge.Models
         public double CostPerMW { get; set; }
 
         // will compute the specific values for wind / fossil energies
-        public void Init(EnergyMetrics energyMetrics)
-        { 
+        public void Init(EnergyMetrics energyMetrics, bool co2CostEnabled)
+        {
             if (EnergySource == EnergySource.Wind)
             {
                 // computing the new max value according to the current wind
@@ -73,6 +73,10 @@ namespace PowerplantCodingChallenge.Models
                     _ => throw new InvalidEnergyTypeException($"You have to provide an energy type for powerplant {Name}"),
                 };
                 CostPerMW = ResourceCostPerMw / Efficiency;
+                if (EnergySource == EnergySource.Gas && co2CostEnabled)
+                {
+                    CostPerMW += 0.3 * energyMetrics.Co2;
+                }
             }
         }
 
