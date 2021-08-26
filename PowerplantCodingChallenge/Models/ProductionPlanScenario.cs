@@ -8,7 +8,7 @@ namespace PowerplantCodingChallenge.Models
 {
     public class ProductionPlanScenario
     {
-        public List<MinimalistPowerPlant> PowerPlants { get; set; }
+        public List<MinimalistPowerPlant> PowerPlants { get; set; } = new List<MinimalistPowerPlant>();
         public double PMax { get; set; }
         public double PMin { get; set; }
         public double PDelivered { get; set; }

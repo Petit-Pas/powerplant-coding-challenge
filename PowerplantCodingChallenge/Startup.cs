@@ -8,6 +8,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using PowerplantCodingChallenge.API.Middlewares;
 using PowerplantCodingChallenge.API.Services.Notifiers;
+using PowerplantCodingChallenge.API.Services.Planners;
 using PowerplantCodingChallenge.Services.Planners;
 using System;
 using System.Collections.Generic;
@@ -34,7 +35,7 @@ namespace PowerplantCodingChallenge
             services.AddControllers()
                         .AddNewtonsoftJson();
 
-            services.AddSingleton<IProductionPlanPlanner, BruteForceLessScenariosProductionPlanPlanner>();
+            services.AddScoped<IProductionPlanPlanner, TreeGenerationProductionPlanPlanner>();
             services.AddSingleton<IProductionPlanCalculatedNotifier, ProductionPlanCalculatedNotifier>();
 
             services.AddLogging(x => x.AddConsole());

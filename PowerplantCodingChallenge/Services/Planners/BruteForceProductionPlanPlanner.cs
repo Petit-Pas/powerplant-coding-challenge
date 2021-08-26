@@ -67,19 +67,7 @@ namespace PowerplantCodingChallenge.Services.Planners
             return response.ToArray();
         }
 
-        public PowerPlantUsageResponse[] FormatResponse(ProductionPlanInput productionPlan, ProductionPlanScenario productionPlanScenario)
-        {
-            List<PowerPlantUsageResponse> result = new List<PowerPlantUsageResponse>();
-            for (int i = 0; i != productionPlan.PowerPlants.Count; i += 1)
-            {
-                result.Add(new PowerPlantUsageResponse()
-                {
-                    Name = productionPlan.PowerPlants[i].Name,
-                    Power = Math.Round(productionPlanScenario.PowerPlants[i].PDelivered, 1),
-                });
-            }
-            return result.ToArray();
-        }
+        
 
         public void RemoveUnusableScenarios(List<ProductionPlanScenario> scenarios, double load)
         {
@@ -121,6 +109,20 @@ namespace PowerplantCodingChallenge.Services.Planners
             logger.LogInformation($"Took {stopwatch.ElapsedMilliseconds}ms to generate the {productionPlanScenarios.Count} scenarios.");
 
             return productionPlanScenarios;
+        }
+
+        public PowerPlantUsageResponse[] FormatResponse(ProductionPlanInput productionPlan, ProductionPlanScenario productionPlanScenario)
+        {
+            List<PowerPlantUsageResponse> result = new List<PowerPlantUsageResponse>();
+            for (int i = 0; i != productionPlan.PowerPlants.Count; i += 1)
+            {
+                result.Add(new PowerPlantUsageResponse()
+                {
+                    Name = productionPlan.PowerPlants[i].Name,
+                    Power = Math.Round(productionPlanScenario.PowerPlants[i].PDelivered, 1),
+                });
+            }
+            return result.ToArray();
         }
 
         // for debug purposes
