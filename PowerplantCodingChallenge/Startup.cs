@@ -1,14 +1,20 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using PowerplantCodingChallenge.API.Middlewares;
+using PowerplantCodingChallenge.API.Services.Notifiers;
 using PowerplantCodingChallenge.Services.Planners;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using System.Net.WebSockets;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace PowerplantCodingChallenge
@@ -29,6 +35,7 @@ namespace PowerplantCodingChallenge
                         .AddNewtonsoftJson();
 
             services.AddSingleton<IProductionPlanPlanner, BruteForceLessScenariosProductionPlanPlanner>();
+            services.AddSingleton<IProductionPlanCalculatedNotifier, ProductionPlanCalculatedNotifier>();
 
             services.AddLogging(x => x.AddConsole());
 
@@ -41,6 +48,9 @@ namespace PowerplantCodingChallenge
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.UseWebSockets();
+            app.UseMiddleware<WebSocketsMiddleware>();
 
             app.UseRouting();
 

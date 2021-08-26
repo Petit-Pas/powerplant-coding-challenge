@@ -42,7 +42,6 @@ namespace PowerplantCodingChallenge.Models
                         break;
                     default:
                         throw new InvalidEnergyTypeException($"Unrecognized energy type '{value}'");
-                        break;
                 }
             }
         }
