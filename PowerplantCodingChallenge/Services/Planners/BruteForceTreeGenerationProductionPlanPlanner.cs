@@ -26,6 +26,11 @@ namespace PowerplantCodingChallenge.API.Services.Planners
 
         public PowerPlantUsageResponse[] ComputeBestPowerUsage(ProductionPlanInput productionPlan)
         {
+            if (productionPlan == null || productionPlan.Fuels == null || productionPlan.PowerPlants == null)
+            {
+                throw new ArgumentNullException("production plan could not be correctly parsed");
+            }
+
             Stopwatch stopwatch = Stopwatch.StartNew();
 
             // generate scenarios
@@ -82,14 +87,15 @@ namespace PowerplantCodingChallenge.API.Services.Planners
                 return;
             }
 
-            // 1 branch where we keep the current powerPlant Off
-            bool[] nextTurnedOn = (bool[])(turnedOn.Clone());
-            buildPossibilityTree(powerPlants, nextTurnedOn, currentIndex + 1, currentPMin, currentPMax - powerPlants[currentIndex].PMax, requiredLoad);
-
             // 1 branch where we turn the current powerPlant On
-            nextTurnedOn = (bool[])(turnedOn.Clone());
+            bool[] nextTurnedOn = (bool[])(turnedOn.Clone());
             nextTurnedOn[currentIndex] = true;
             buildPossibilityTree(powerPlants, nextTurnedOn, currentIndex + 1, currentPMin + powerPlants[currentIndex].PMin, currentPMax, requiredLoad);
+
+            // 1 branch where we keep the current powerPlant Off
+            nextTurnedOn = (bool[])(turnedOn.Clone());
+            buildPossibilityTree(powerPlants, nextTurnedOn, currentIndex + 1, currentPMin, currentPMax - powerPlants[currentIndex].PMax, requiredLoad);
+
         }
 
         private ProductionPlanScenario _currentBestScenario = null;
