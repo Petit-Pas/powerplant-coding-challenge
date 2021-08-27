@@ -11,12 +11,14 @@ using System.Threading.Tasks;
 
 namespace PowerplantCodingChallenge.API.Services.Planners
 {
-    public class TreeGenerationProductionPlanPlanner : IProductionPlanPlanner
+    // ITERATION 3
+
+    public class BruteForceTreeGenerationProductionPlanPlanner : IProductionPlanPlanner
     {
-        private readonly ILogger<TreeGenerationProductionPlanPlanner> logger;
+        private readonly ILogger<BruteForceTreeGenerationProductionPlanPlanner> logger;
         private readonly IConfiguration configuration;
 
-        public TreeGenerationProductionPlanPlanner(ILogger<TreeGenerationProductionPlanPlanner> logger, IConfiguration configuration)
+        public BruteForceTreeGenerationProductionPlanPlanner(ILogger<BruteForceTreeGenerationProductionPlanPlanner> logger, IConfiguration configuration)
         {
             this.logger = logger;
             this.configuration = configuration;

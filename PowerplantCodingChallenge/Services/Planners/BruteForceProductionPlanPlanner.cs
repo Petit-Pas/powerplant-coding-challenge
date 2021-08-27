@@ -12,6 +12,8 @@ using System.Threading.Tasks;
 
 namespace PowerplantCodingChallenge.Services.Planners
 {
+    // ITERATION 1
+
     /// <summary>
     ///     The BruteForcePlanner will generate every possibility in term of ON/OFF for power plant 
     ///         => having 6 powerplant will generate 2^6 scenarios

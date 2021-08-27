@@ -35,7 +35,7 @@ namespace PowerplantCodingChallenge
             services.AddControllers()
                         .AddNewtonsoftJson();
 
-            services.AddScoped<IProductionPlanPlanner, TreeGenerationProductionPlanPlanner>();
+            services.AddScoped<IProductionPlanPlanner, BruteForceTreeGenerationProductionPlanPlanner>();
             services.AddSingleton<IProductionPlanCalculatedNotifier, ProductionPlanCalculatedNotifier>();
 
             services.AddLogging(x => x.AddConsole());

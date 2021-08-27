@@ -9,6 +9,8 @@ using System.Threading.Tasks;
 
 namespace PowerplantCodingChallenge.Services.Planners
 {
+    // ITERATION 2
+
     public class BruteForceLessScenariosProductionPlanPlanner : BruteForceProductionPlanPlanner
     {
         private readonly ILogger<BruteForceLessScenariosProductionPlanPlanner> logger;
