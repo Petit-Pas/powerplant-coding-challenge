@@ -1,4 +1,5 @@
-﻿using PowerplantCodingChallenge.Models.Exceptions;
+﻿using Newtonsoft.Json;
+using PowerplantCodingChallenge.Models.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -44,12 +45,29 @@ namespace PowerplantCodingChallenge.Models
                         throw new InvalidEnergyTypeException($"Unrecognized energy type '{value}'");
                 }
             }
+            get
+            {
+                switch (EnergySource)
+                {
+                    case EnergySource.Gas:
+                        return "gasfired";
+                    case EnergySource.Kerosine:
+                        return "turbojet";
+                    case EnergySource.Wind:
+                        return "windturbine";
+                    default:
+                        return "unknown";
+                }
+            }
         }
+        [JsonIgnore]
         public EnergySource EnergySource { get; set; } = EnergySource.Unknown;
 
         public double Efficiency { get; set; }
         public double PMin { get; set; }
         public double PMax { get; set; }
+
+        [JsonIgnore]
         public double CostPerMW { get; set; }
 
         // will compute the specific values for wind / fossil energies

@@ -55,8 +55,6 @@ namespace PowerplantCodingChallenge.Services.Planners
             // compute each cost
             scenarios.ForEach(x => x.ComputeTotalCost());
 
-            DumpScenarios(scenarios, productionPlan, false);
-
             // Create response
             scenarios = scenarios.OrderBy(x => x.TotalCost).ToList();
             var response = FormatResponse(productionPlan, scenarios.First());
