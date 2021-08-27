@@ -177,6 +177,50 @@ namespace PowerplantCodingChallenge.Test.Services.Planners
         }
 
         [Test]
+        public void ComputeBestPowerUsage_TrickyTest1()
+        {
+            // arrange
+            EnergyMetrics energyMetrics = new EnergyMetrics() { Co2 = 0, KersosineCost = 50.8, GasCost = 20, WindEfficiency = 100 };
+            ProductionPlanInput productionPlan = new ProductionPlanInput(60, energyMetrics, new List<PowerPlant>()
+            {
+                new("windpark1", EnergySource.Wind, 1, 0, 20),
+                new("gasfired", EnergySource.Gas, 0.9, 50, 100),
+                new("gasfiredinefficient", EnergySource.Gas, 0.1, 0, 100),
+            });
+
+            // act
+            var result = _planner.ComputeBestPowerUsage(productionPlan);
+
+            // assert
+            Assert.AreEqual(60, result.Select(x => x.Power).Sum());
+            Assert.AreEqual(0, result.First(x => x.Name == "windpark1").Power);
+            Assert.AreEqual(60, result.First(x => x.Name == "gasfired").Power);
+            Assert.AreEqual(0, result.First(x => x.Name == "gasfiredinefficient").Power);
+        }
+
+        [Test]
+        public void ComputeBestPowerUsage_TrickyTest2()
+        {
+            // arrange
+            EnergyMetrics energyMetrics = new EnergyMetrics() { Co2 = 0, KersosineCost = 50.8, GasCost = 20, WindEfficiency = 100 };
+            ProductionPlanInput productionPlan = new ProductionPlanInput(80, energyMetrics, new List<PowerPlant>()
+            {
+                new("windpark1", EnergySource.Wind, 1, 0, 60),
+                new("gasfired", EnergySource.Gas, 0.9, 50, 100),
+                new("gasfiredinefficient", EnergySource.Gas, 0.1, 0, 200),
+            });
+
+            // act
+            var result = _planner.ComputeBestPowerUsage(productionPlan);
+
+            // assert
+            Assert.AreEqual(80, result.Select(x => x.Power).Sum());
+            Assert.AreEqual(0, result.First(x => x.Name == "windpark1").Power);
+            Assert.AreEqual(80, result.First(x => x.Name == "gasfired").Power);
+            Assert.AreEqual(0, result.First(x => x.Name == "gasfiredinefficient").Power);
+        }
+
+        [Test]
         public void ComputeBestPowerUsage_ExamplePayload1_NoCO2()
         {
             // arrange
