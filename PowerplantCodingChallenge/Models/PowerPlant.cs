@@ -92,7 +92,7 @@ namespace PowerplantCodingChallenge.Models
                 CostPerMW = ResourceCostPerMw / Efficiency;
                 if (EnergySource == EnergySource.Gas && co2CostEnabled)
                 {
-                    CostPerMW += 0.3 * energyMetrics.Co2;
+                    CostPerMW += energyMetrics.CO2PerMw * energyMetrics.Co2;
                 }
             }
         }

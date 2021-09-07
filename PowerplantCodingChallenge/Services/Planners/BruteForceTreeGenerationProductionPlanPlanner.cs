@@ -39,7 +39,6 @@ namespace PowerplantCodingChallenge.API.Services.Planners
             productionPlan.PowerPlants = productionPlan.PowerPlants.OrderBy(x => x.CostPerMW).ToList();
 
             bool[] turnedOn = productionPlan.PowerPlants.Select(x => x.PMin == 0).ToArray();
-
             double PMax = productionPlan.PowerPlants.Select(x => x.PMax).Sum();
             buildPossibilityTree(productionPlan.PowerPlants, turnedOn, 0, 0, PMax, productionPlan.RequiredLoad);
 

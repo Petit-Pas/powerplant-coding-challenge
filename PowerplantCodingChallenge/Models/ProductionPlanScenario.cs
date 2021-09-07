@@ -17,9 +17,10 @@ namespace PowerplantCodingChallenge.Models
 
         public void RefreshPs()
         {
-            PMax = PowerPlants.Where(x => x.IsTurnedOn).Select(x => x.PMax).Sum();
-            PMin = PowerPlants.Where(x => x.IsTurnedOn).Select(x => x.PMin).Sum();
-            PDelivered = PowerPlants.Where(x => x.IsTurnedOn).Select(x => x.PDelivered).Sum();
+            var TurnedOn = PowerPlants.Where(x => x.IsTurnedOn);
+            PMax = TurnedOn.Select(x => x.PMax).Sum();
+            PMin = TurnedOn.Select(x => x.PMin).Sum();
+            PDelivered = TurnedOn.Select(x => x.PDelivered).Sum();
         }
 
         public void ComputeTotalCost()
@@ -36,24 +37,21 @@ namespace PowerplantCodingChallenge.Models
         ///     Will modify the PDelivered to reach the given load
         ///     MinimalistPowerPlants should be ordered by CostPerMW to enable the optimization of the scenarios
         /// </summary>
-        /// <param name="load"></param>
-        public void FineTune(double load)
+        /// <param name="requiredLoad"></param>
+        public void FineTune(double requiredLoad)
         {
             RefreshPs();
-            if (PMin > load || PMax < load)
-                throw new InvalidLoadException("This scenario cannot finetune to meet the given load");
-            load -= PDelivered;
-            foreach (MinimalistPowerPlant powerPlant in PowerPlants)
+            if (PMin > requiredLoad || PMax < requiredLoad)
+                throw new InvalidLoadException("This scenario cannot be finetuned to meet the given load");
+            requiredLoad -= PDelivered;
+            foreach (MinimalistPowerPlant powerPlant in PowerPlants.Where(x => x.IsTurnedOn))
             {
-                if (powerPlant.IsTurnedOn && load != 0)
+                if (powerPlant.PDelivered != powerPlant.PMax)
                 {
-                    if (powerPlant.PDelivered != powerPlant.PMax)
-                    {
-                        double modifier = Math.Min(load, powerPlant.PMax - powerPlant.PDelivered);
-                        powerPlant.PDelivered += modifier;
-                        PDelivered += modifier;
-                        load -= modifier;
-                    }
+                    double additionalLoad = Math.Min(requiredLoad, powerPlant.PMax - powerPlant.PDelivered);
+                    powerPlant.PDelivered += additionalLoad;
+                    PDelivered += additionalLoad;
+                    requiredLoad -= additionalLoad;
                 }
             }
         }

@@ -20,5 +20,9 @@ namespace PowerplantCodingChallenge.Models
 
         [JsonProperty(PropertyName = @"wind(%)")]
         public double WindEfficiency { get; set; }
+
+        [JsonIgnore]
+        public double CO2PerMw { get; } = 0.3;
+
     }
 }
