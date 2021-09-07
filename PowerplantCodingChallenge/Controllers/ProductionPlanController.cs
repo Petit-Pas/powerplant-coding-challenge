@@ -26,12 +26,6 @@ namespace PowerplantCodingChallenge.Controllers
             this.logger = logger;
         }
 
-        public IActionResult Index()
-        {
-            return View();
-        }
-
-
         [HttpPost]
         public ActionResult<PowerPlantUsageResponse[]> CalculateProductionPlan([FromBody] ProductionPlanInput input) 
         {
@@ -41,8 +35,8 @@ namespace PowerplantCodingChallenge.Controllers
                 return BadRequest("Load cannot be negative");
             }
 
-            string errorMessage = "";
-            string errorType = "";
+            string errorMessage;
+            string errorType;
 
             try
             {
