@@ -33,24 +33,24 @@ namespace PowerplantCodingChallenge.API.Services.Planners
         {
             if (productionPlan?.Fuels == null || productionPlan?.PowerPlants == null)
             {
-                throw new ArgumentNullException("production plan could not be correctly parsed");
+                throw new ArgumentNullException("invalid production plan");
             }
 
             Stopwatch stopwatch = Stopwatch.StartNew();
 
-            // generate scenarios
+            // prepare recursive
             bool co2Enabled = bool.Parse(configuration.GetSection("PowerPlantCodingChallenge:CO2Enabled").Value);
             powerPlants = productionPlan.PowerPlants.ConvertAll(x => new PowerPlant(x.Name, x.Type.ConvertToEnergySource(), x.Efficiency, x.PMin, x.PMax, productionPlan.Fuels, co2Enabled))
                                                     .OrderBy(x => x.CostPerMW).ToList();
             requiredLoad = productionPlan.RequiredLoad;
 
-            bool[] turnedOn = powerPlants.Select(x => x.IsTurnedOn).ToArray();
-            double PMax = powerPlants.Select(x => x.PMax).Sum();
-
-            buildPossibilityTree(turnedOn, 0, 0, PMax);
+            // look for the best scenario
+            buildPossibilityTree(powerPlants.Select(x => x.IsTurnedOn).ToArray(), 0, 0, powerPlants.Select(x => x.PMax).Sum());
 
             if (currentBestScenario == null)
                 throw new InvalidLoadException("Found no scenario to provide the asked load");
+
+            // creates response
             var response = currentBestScenario.PowerPlants.ConvertAll(x => new PowerPlantUsageDto(x.Name, x.PDelivered)).ToArray();
 
             stopwatch.Stop();
@@ -112,28 +112,9 @@ namespace PowerplantCodingChallenge.API.Services.Planners
                     scenario.PowerPlants[i].TurnOn();
             }
 
-            scenario.ComputePs();
             scenario.FineTune(requiredLoad);
-            scenario.ComputeTotalCost();
             if (currentBestScenario == null || currentBestScenario.TotalCost > scenario.TotalCost)
                 currentBestScenario = scenario;
-        }
-
-        // debug purpose
-        private void display_array(bool[] array, double currentPmax, double currentPmin, double totalCost)
-        {
-            string output = "[";
-            foreach (bool boolean in array)
-            {
-                if (boolean)
-                    output += "1";
-                else
-                    output += "0";
-            }
-            output += "]";
-
-            output += $" will output between {currentPmin} and {currentPmax} for a price of {totalCost}";
-            logger.LogDebug(output);
         }
     }
 }

@@ -12,8 +12,8 @@ namespace PowerplantCodingChallenge.Models
             PowerPlants = powerPlants;
         }
 
-        private double PMax;
-        private double PMin;
+        private double pMax;
+        private double pMin;
 
         public List<PowerPlant> PowerPlants { get; private set; } = new ();
         public double PDelivered { get; private set; }
@@ -22,7 +22,7 @@ namespace PowerplantCodingChallenge.Models
         /// <summary>
         ///     Will update TotalCost depending on the PDelivered of each PowerPlant
         /// </summary>
-        public void ComputeTotalCost()
+        private void ComputeTotalCost()
         {
             TotalCost = PowerPlants.Sum(x => x.PDelivered * x.CostPerMW);
         }
@@ -36,7 +36,7 @@ namespace PowerplantCodingChallenge.Models
         public void FineTune(double requiredLoad)
         {
             ComputePs();
-            if (PMin > requiredLoad || PMax < requiredLoad)
+            if (pMin > requiredLoad || pMax < requiredLoad)
                 throw new InvalidLoadException("This scenario cannot be finetuned to meet the given load");
 
             double remainingLoad = requiredLoad - PDelivered;
@@ -52,6 +52,7 @@ namespace PowerplantCodingChallenge.Models
                 }
             }
             ComputePDelivered();
+            ComputeTotalCost();
         }
 
         public void ComputePs()
@@ -63,8 +64,8 @@ namespace PowerplantCodingChallenge.Models
         private void ComputePBoundaries()
         {
             var TurnedOn = PowerPlants.Where(x => x.IsTurnedOn);
-            PMax = TurnedOn.Sum(x => x.PMax);
-            PMin = TurnedOn.Sum(x => x.PMin);
+            pMax = TurnedOn.Sum(x => x.PMax);
+            pMin = TurnedOn.Sum(x => x.PMin);
         }
 
         private void ComputePDelivered()

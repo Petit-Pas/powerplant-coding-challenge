@@ -11,9 +11,11 @@ namespace PowerplantCodingChallenge.API.Controllers.Dtos
                 .WithMessage("The load should be higher than 0");
 
             RuleForEach(x => x.PowerPlants)
+                .NotNull()
                 .SetValidator(new PowerPlantDtoValidator());
 
             RuleFor(x => x.Fuels)
+                .NotNull()
                 .SetValidator(new EnergyMetricsDtoValidator());
         }
     }

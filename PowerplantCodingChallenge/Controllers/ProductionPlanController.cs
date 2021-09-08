@@ -41,7 +41,6 @@ namespace PowerplantCodingChallenge.Controllers
 
             string errorMessage;
             string errorType;
-
             try
             {
                 PowerPlantUsageDto[] response = planner.ComputeBestPowerUsage(input);

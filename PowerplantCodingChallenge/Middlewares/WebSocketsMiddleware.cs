@@ -38,7 +38,7 @@ namespace PowerplantCodingChallenge.API.Middlewares
                 {
                     using (WebSocket webSocket = await context.WebSockets.AcceptWebSocketAsync())
                     {
-                        await handleSocket(webSocket);
+                        await HandleSocket(webSocket);
                     }
                 }
                 else
@@ -52,22 +52,22 @@ namespace PowerplantCodingChallenge.API.Middlewares
             }
         }
 
-        private async Task handleSocket(WebSocket webSocket)
+        private async Task HandleSocket(WebSocket webSocket)
         {
             ProductionPlanCalculatedEventHandler eventHandler = new ProductionPlanCalculatedEventHandler(async (e) => {
-                await sendPlanToSocket(e, webSocket);
+                await SendPlanToSocket(e, webSocket);
             });
             notifier.ProductionPlanCalculated += eventHandler;
             logger.LogInformation("A client has connected to the WebSocket");
 
-            await waitUntilClosed(webSocket);
+            await WaitUntilClosed(webSocket);
 
             notifier.ProductionPlanCalculated -= eventHandler;
             webSocket.Dispose();
             logger.LogInformation("A client has disconnected from the WebSocket");
         }
 
-        private async Task sendPlanToSocket(ProductionPlanCalculatedEventArgs e, WebSocket webSocket)
+        private async Task SendPlanToSocket(ProductionPlanCalculatedEventArgs e, WebSocket webSocket)
         {
             string jsonString = JsonConvert.SerializeObject(e);
             var buffer = Encoding.ASCII.GetBytes(jsonString);
@@ -78,7 +78,7 @@ namespace PowerplantCodingChallenge.API.Middlewares
             }
         }
 
-        private async Task waitUntilClosed(WebSocket webSocket)
+        private async Task WaitUntilClosed(WebSocket webSocket)
         {
             try
             {

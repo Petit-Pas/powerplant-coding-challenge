@@ -47,38 +47,45 @@ namespace PowerplantCodingChallenge.Test.Services.Planners
         [Test]
         public void ComputeBestPowerUsage_CannotProvideLoad_NotEnough()
         {
+            // arrange + act
             PowerPlanDto productionPlan = new (500, _baseEnergyMetrics, new List<PowerPlantDto>()
             {
                 new("Gas1", EnergySource.Gas.ConvertToString(), 0.5, 50, 100),
                 new("Gas2", EnergySource.Gas.ConvertToString(), 0.5, 50, 100),
             });
 
+            // assert
             Assert.Throws(typeof(InvalidLoadException), () => _planner.ComputeBestPowerUsage(productionPlan));
         }
 
         [Test]
         public void ComputeBestPowerUsage_CannotProvideLoad_TooMuch()
         {
+            // arrange + act
             PowerPlanDto productionPlan = new (20, _baseEnergyMetrics, new List<PowerPlantDto>()
             {
                 new("Gas1", EnergySource.Gas.ConvertToString(), 0.5, 50, 100),
                 new("Wind1", EnergySource.Wind.ConvertToString(), 1, 0, 50),
             });
 
+            // assert
             Assert.Throws(typeof(InvalidLoadException), () => _planner.ComputeBestPowerUsage(productionPlan));
         }
 
         [Test]
         public void ComputeBestPowerUsage_Wind_Enough()
         {
+            // arrange
             PowerPlanDto productionPlan = new (25, _baseEnergyMetrics, new List<PowerPlantDto>()
             {
                 new("Gas1", EnergySource.Gas.ConvertToString(), 0.5, 10, 100),
                 new("Wind1", EnergySource.Wind.ConvertToString(), 1, 0, 50),
             });
 
+            // act
             var result = _planner.ComputeBestPowerUsage(productionPlan).ToList();
 
+            // assert
             Assert.AreEqual(25, result.First(x => x.Name == "Wind1").Power);
             Assert.AreEqual(0, result.First(x => x.Name == "Gas1").Power);
         }
@@ -86,14 +93,17 @@ namespace PowerplantCodingChallenge.Test.Services.Planners
         [Test]
         public void ComputeBestPowerUsage_Wind_NotEnough()
         {
+            // arrange
             PowerPlanDto productionPlan = new (50, _baseEnergyMetrics, new List<PowerPlantDto>()
             {
                 new("Gas1", EnergySource.Gas.ConvertToString(), 0.5, 10, 100),
                 new("Wind1", EnergySource.Wind.ConvertToString(), 1, 0, 50),
             });
 
+            // act
             var result = _planner.ComputeBestPowerUsage(productionPlan).ToList();
 
+            // assert
             Assert.AreEqual(25, result.First(x => x.Name == "Wind1").Power);
             Assert.AreEqual(25, result.First(x => x.Name == "Gas1").Power);
         }
@@ -101,14 +111,17 @@ namespace PowerplantCodingChallenge.Test.Services.Planners
         [Test]
         public void ComputeBestPowerUsage_Wind_TooMuch()
         {
+            // arrange
             PowerPlanDto productionPlan = new (20, _baseEnergyMetrics, new List<PowerPlantDto>()
             {
                 new("Gas1", EnergySource.Gas.ConvertToString(), 0.5, 10, 100),
                 new("Wind1", EnergySource.Wind.ConvertToString(), 1, 0, 50),
             });
 
+            // act
             var result = _planner.ComputeBestPowerUsage(productionPlan).ToList();
 
+            // assert
             Assert.AreEqual(0, result.First(x => x.Name == "Wind1").Power);
             Assert.AreEqual(20, result.First(x => x.Name == "Gas1").Power);
         }
@@ -116,6 +129,7 @@ namespace PowerplantCodingChallenge.Test.Services.Planners
         [Test]
         public void ComputeBestPowerUsage_Gas_Efficiency()
         {
+            // arrange
             PowerPlanDto productionPlan = new (20, _baseEnergyMetrics, new List<PowerPlantDto>()
             {
                 new("Gas1", EnergySource.Gas.ConvertToString(), 0.5, 10, 100),
@@ -125,8 +139,10 @@ namespace PowerplantCodingChallenge.Test.Services.Planners
                 new("Gas5", EnergySource.Gas.ConvertToString(), 0.45, 10, 100),
             });
 
+            // act
             var result = _planner.ComputeBestPowerUsage(productionPlan).ToList();
 
+            // assert
             Assert.AreEqual(20, result.First(x => x.Name == "Gas3").Power);
             Assert.AreEqual(0, result.Where(x => x.Name != "Gas3").Select(x => x.Power).Sum());
         }
@@ -134,6 +150,7 @@ namespace PowerplantCodingChallenge.Test.Services.Planners
         [Test]
         public void ComputeBestPowerUsage_Gas_Pmin()
         {
+            // arrange
             PowerPlanDto productionPlan = new (125, _baseEnergyMetrics, new List<PowerPlantDto>()
             {
                 new("Wind1", EnergySource.Wind.ConvertToString(), 1, 0, 50),
@@ -141,8 +158,10 @@ namespace PowerplantCodingChallenge.Test.Services.Planners
                 new("Gas2", EnergySource.Gas.ConvertToString(), 0.8, 80, 150),
             });
 
+            // act
             var result = _planner.ComputeBestPowerUsage(productionPlan).ToList();
 
+            // assert
             Assert.AreEqual(100, result.First(x => x.Name == "Gas2").Power);
             Assert.AreEqual(0, result.First(x => x.Name == "Gas1").Power);
         }
@@ -150,6 +169,7 @@ namespace PowerplantCodingChallenge.Test.Services.Planners
         [Test]
         public void ComputeBestPowerUsage_Kerosine()
         {
+            // arrange
             PowerPlanDto productionPlan = new (100, _baseEnergyMetrics, new List<PowerPlantDto>()
             {
                 new("Wind1", EnergySource.Wind.ConvertToString(), 1, 0, 150),
@@ -157,8 +177,10 @@ namespace PowerplantCodingChallenge.Test.Services.Planners
                 new("Kerosine1", EnergySource.Kerosine.ConvertToString(), 0.5, 0, 200),
             });
 
+            // act
             var result = _planner.ComputeBestPowerUsage(productionPlan).ToList();
 
+            // assert
             Assert.AreEqual(0, result.First(x => x.Name == "Gas1").Power);
             Assert.AreEqual(25, result.First(x => x.Name == "Kerosine1").Power);
         }
@@ -166,15 +188,18 @@ namespace PowerplantCodingChallenge.Test.Services.Planners
         [Test]
         public void ComputeBestPowerUsage_CO2Impact()
         {
+            // arrange
             PowerPlanDto productionPlan = new (150, _baseEnergyMetrics, new List<PowerPlantDto>()
             {
                 new("Gas1", EnergySource.Gas.ConvertToString(), 0.3, 100, 200),
                 new("Kerosine1", EnergySource.Kerosine.ConvertToString(), 1, 0, 200),
             });
 
+            // act
             var resultNoCO2 = _planner.ComputeBestPowerUsage(productionPlan);
             var resultCO2 = _plannerCo2Enabled.ComputeBestPowerUsage(productionPlan);
 
+            // assert
             Assert.AreEqual(150, resultNoCO2.First(x => x.Name == "Gas1").Power);
             Assert.AreEqual(150, resultCO2.First(x => x.Name == "Kerosine1").Power);
         }

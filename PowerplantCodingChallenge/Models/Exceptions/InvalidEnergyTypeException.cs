@@ -6,7 +6,6 @@ namespace PowerplantCodingChallenge.Models.Exceptions
     {
         public InvalidEnergyTypeException(string message)  : base(message)
         {
-
         }
     }
 }
