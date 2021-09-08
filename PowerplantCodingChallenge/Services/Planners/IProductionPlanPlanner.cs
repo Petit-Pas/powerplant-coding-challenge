@@ -1,7 +1,4 @@
 ﻿using PowerplantCodingChallenge.API.Controllers.Dtos;
-using PowerplantCodingChallenge.Models;
-using System;
-using System.Collections.Generic;
 
 namespace PowerplantCodingChallenge.Services.Planners
 {

@@ -4,8 +4,6 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using PowerplantCodingChallenge.API.Services.Notifiers;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Net.WebSockets;
 using System.Text;

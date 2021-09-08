@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace PowerplantCodingChallenge.API.Controllers.Dtos
+﻿namespace PowerplantCodingChallenge.API.Controllers.Dtos
 {
     public class PowerPlantDto
     {

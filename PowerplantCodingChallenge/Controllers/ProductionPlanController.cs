@@ -3,13 +3,10 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using PowerplantCodingChallenge.API.Controllers.Dtos;
 using PowerplantCodingChallenge.API.Services.Notifiers;
-using PowerplantCodingChallenge.Models;
 using PowerplantCodingChallenge.Models.Exceptions;
 using PowerplantCodingChallenge.Services.Planners;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace PowerplantCodingChallenge.Controllers
 {

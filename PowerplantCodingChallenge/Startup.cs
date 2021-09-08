@@ -1,7 +1,5 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -11,14 +9,6 @@ using PowerplantCodingChallenge.API.Middlewares;
 using PowerplantCodingChallenge.API.Services.Notifiers;
 using PowerplantCodingChallenge.API.Services.Planners;
 using PowerplantCodingChallenge.Services.Planners;
-using FluentValidation.AspNetCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.WebSockets;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace PowerplantCodingChallenge
 {

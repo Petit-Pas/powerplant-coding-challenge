@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using PowerplantCodingChallenge.API.Controllers.Dtos;
 using PowerplantCodingChallenge.Models;
-using PowerplantCodingChallenge.Models.Exceptions;
 
 namespace PowerplantCodingChallenge.Test.Models
 {

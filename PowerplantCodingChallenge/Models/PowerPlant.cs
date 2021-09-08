@@ -1,10 +1,4 @@
-﻿using Newtonsoft.Json;
-using PowerplantCodingChallenge.API.Controllers.Dtos;
-using PowerplantCodingChallenge.Models.Exceptions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using PowerplantCodingChallenge.API.Controllers.Dtos;
 
 namespace PowerplantCodingChallenge.Models
 {

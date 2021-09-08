@@ -1,8 +1,4 @@
 ﻿using PowerplantCodingChallenge.API.Controllers.Dtos;
-using PowerplantCodingChallenge.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace PowerplantCodingChallenge.API.Services.Notifiers
