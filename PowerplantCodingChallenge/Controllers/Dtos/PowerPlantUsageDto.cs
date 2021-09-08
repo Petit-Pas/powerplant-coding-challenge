@@ -4,11 +4,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace PowerplantCodingChallenge.Models
+namespace PowerplantCodingChallenge.API.Controllers.Dtos
 {
-    // The power delivered by a power plant as required by json response
-    public class PowerPlantUsageResponse
+    public class PowerPlantUsageDto
     {
+        public PowerPlantUsageDto(string name, double power)
+        {
+            Name = name;
+            Power = power;
+        }
+
         public string Name { get; set; }
 
         // Should be round to .1

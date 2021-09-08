@@ -4,10 +4,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace PowerplantCodingChallenge.Models
+namespace PowerplantCodingChallenge.API.Controllers.Dtos
 {
-    // Contains every value concerning energy costs + wind efficiency
-    public class EnergyMetrics
+    public class EnergyMetricsDto
     {
         [JsonProperty(PropertyName = @"gas(euro/MWh)")]
         public double GasCost { get; set; }
@@ -21,8 +20,7 @@ namespace PowerplantCodingChallenge.Models
         [JsonProperty(PropertyName = @"wind(%)")]
         public double WindEfficiency { get; set; }
 
-        [JsonIgnore]
+        [JsonProperty(PropertyName = @"co2(ton/MWh)")]
         public double CO2PerMw { get; } = 0.3;
-
     }
 }

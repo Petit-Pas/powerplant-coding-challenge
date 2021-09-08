@@ -1,4 +1,5 @@
-﻿using PowerplantCodingChallenge.Models;
+﻿using PowerplantCodingChallenge.API.Controllers.Dtos;
+using PowerplantCodingChallenge.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +11,7 @@ namespace PowerplantCodingChallenge.API.Services.Notifiers
     {
         public event ProductionPlanCalculatedEventHandler ProductionPlanCalculated;
 
-        public async Task Notify(ProductionPlanInput request, PowerPlantUsageResponse[] response)
+        public async Task Notify(PowerPlanDto request, PowerPlantUsageDto[] response)
         {
             await Task.Run(() => ProductionPlanCalculated?.Invoke(new ProductionPlanCalculatedEventArgs(request, response)));
         }

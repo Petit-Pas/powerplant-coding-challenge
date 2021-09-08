@@ -1,4 +1,5 @@
-﻿using PowerplantCodingChallenge.Models;
+﻿using PowerplantCodingChallenge.API.Controllers.Dtos;
+using PowerplantCodingChallenge.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,14 +9,14 @@ namespace PowerplantCodingChallenge.API.Services.Notifiers
 {
     public class ProductionPlanCalculatedEventArgs
     {
-        public ProductionPlanCalculatedEventArgs(ProductionPlanInput request, PowerPlantUsageResponse[] response)
+        public ProductionPlanCalculatedEventArgs(PowerPlanDto request, PowerPlantUsageDto[] response)
         {
             Request = request;
             Response = response;
         }
 
-        public ProductionPlanInput Request { get; set; }
-        public PowerPlantUsageResponse[] Response { get; set; }
+        public PowerPlanDto Request { get; private set; }
+        public PowerPlantUsageDto[] Response { get; private set; }
     }
 
     public delegate void ProductionPlanCalculatedEventHandler(ProductionPlanCalculatedEventArgs e);
@@ -24,6 +25,6 @@ namespace PowerplantCodingChallenge.API.Services.Notifiers
     {
         public event ProductionPlanCalculatedEventHandler ProductionPlanCalculated;
 
-        public Task Notify(ProductionPlanInput request, PowerPlantUsageResponse[] response);
+        public Task Notify(PowerPlanDto request, PowerPlantUsageDto[] response);
     }
 }

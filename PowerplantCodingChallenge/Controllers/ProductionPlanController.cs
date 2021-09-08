@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
+using PowerplantCodingChallenge.API.Controllers.Dtos;
 using PowerplantCodingChallenge.API.Services.Notifiers;
 using PowerplantCodingChallenge.Models;
 using PowerplantCodingChallenge.Models.Exceptions;
@@ -27,8 +29,19 @@ namespace PowerplantCodingChallenge.Controllers
         }
 
         [HttpPost]
-        public ActionResult<PowerPlantUsageResponse[]> CalculateProductionPlan([FromBody] ProductionPlanInput input) 
+        public ActionResult<PowerPlantUsageDto[]> CalculateProductionPlan([FromBody] PowerPlanDto input) 
         {
+            PowerPlanDtoValidator validator = new();
+
+            var result = validator.Validate(input);
+
+            if (result.Errors.Count != 0)
+            {
+                var messages = result.Errors.Select(x => x.ErrorMessage);
+                logger.LogWarning($"a request generated {result.Errors.Count} errors: " + String.Join(", ", messages));
+                return BadRequest(JsonConvert.SerializeObject(new { errors = messages }));
+            }
+
             if (input.RequiredLoad < 0)
             {
                 logger.LogWarning("A negative load has been requested.");
@@ -40,7 +53,7 @@ namespace PowerplantCodingChallenge.Controllers
 
             try
             {
-                PowerPlantUsageResponse[] response = planner.ComputeBestPowerUsage(input);
+                PowerPlantUsageDto[] response = planner.ComputeBestPowerUsage(input);
                 notifier.Notify(input, response);
                 return Ok(response);
             }

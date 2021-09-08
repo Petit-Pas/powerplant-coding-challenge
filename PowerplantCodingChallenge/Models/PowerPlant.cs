@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using PowerplantCodingChallenge.API.Controllers.Dtos;
 using PowerplantCodingChallenge.Models.Exceptions;
 using System;
 using System.Collections.Generic;
@@ -7,106 +8,96 @@ using System.Threading.Tasks;
 
 namespace PowerplantCodingChallenge.Models
 {
-    // represents a powerPlant as recieved from the input json
     public class PowerPlant
     {
-        public PowerPlant()
-        {
-        }
+        private double efficiency;
+        private EnergySource energySource;
 
-        public PowerPlant(string name, EnergySource energySource, double efficiency, double pMin, double pMax)
+        public string Name { get; private set; }
+        public double PMin { get; private set; }
+        public double PMax { get; private set; }
+        public double CostPerMW { get; private set; }
+        
+        public double PDelivered { get; private set; }
+        public bool IsTurnedOn { get; private set; }
+
+        public PowerPlant(string name, EnergySource energySource, double efficiency, double pMin, double pMax, EnergyMetricsDto energyMetrics, bool co2enabled)
         {
             Name = name;
-            EnergySource = energySource;
-            Efficiency = efficiency;
+            this.energySource = energySource;
             PMax = pMax;
             PMin = pMin;
+            this.efficiency = efficiency;
+            
+            AdaptValuesToEnergyType(energyMetrics);
+            // turning a powerplant ON has no impact if PMin is 0
+            // Warning, this needs to be done after the AdaptValuesToEnergyType since the wind turbines are recieved as having 0 as PMin, which is wrong
+            IsTurnedOn = PMin == 0 ? true : false;
+            PDelivered = 0;
+
+            ComputeCostPerMW(energyMetrics, co2enabled);
         }
 
-        public string Name { get; set; }
-
-        // we convert this to an enum to avoid a maximum of string comparison
-        public string Type
+        public PowerPlant(PowerPlant to_copy)
         {
-            set
-            {
-                switch (value)
-                {
-                    case "gasfired":
-                        EnergySource = EnergySource.Gas;
-                        break;
-                    case "turbojet":
-                        EnergySource = EnergySource.Kerosine;
-                        break;
-                    case "windturbine":
-                        EnergySource = EnergySource.Wind;
-                        break;
-                    default:
-                        throw new InvalidEnergyTypeException($"Unrecognized energy type '{value}'");
-                }
-            }
-            get
-            {
-                switch (EnergySource)
-                {
-                    case EnergySource.Gas:
-                        return "gasfired";
-                    case EnergySource.Kerosine:
-                        return "turbojet";
-                    case EnergySource.Wind:
-                        return "windturbine";
-                    default:
-                        return "unknown";
-                }
-            }
+            Name = to_copy.Name;
+            energySource = to_copy.energySource;
+            PMax = to_copy.PMax;
+            PMin = to_copy.PMin;
+            efficiency = to_copy.efficiency;
+
+            IsTurnedOn = to_copy.IsTurnedOn;
+            PDelivered = to_copy.PDelivered;
+
+            CostPerMW = to_copy.CostPerMW;
         }
-        [JsonIgnore]
-        public EnergySource EnergySource { get; set; } = EnergySource.Unknown;
 
-        public double Efficiency { get; set; }
-        public double PMin { get; set; }
-        public double PMax { get; set; }
-
-        [JsonIgnore]
-        public double CostPerMW { get; set; }
-
-        // will compute the specific values for wind / fossil energies
-        public void Init(EnergyMetrics energyMetrics, bool co2CostEnabled)
+        private void AdaptValuesToEnergyType(EnergyMetricsDto energyMetrics)
         {
-            if (EnergySource == EnergySource.Wind)
+            if (energySource == EnergySource.Wind)
             {
                 // computing the new max value according to the current wind
                 PMax = PMax * energyMetrics.WindEfficiency / 100;
                 // since wind turbines can't be partially on, PMin is equal to PMax
                 PMin = PMax;
-                CostPerMW = 0;
-            }
-            else
-            {
-                double ResourceCostPerMw = EnergySource switch
-                {
-                    EnergySource.Gas => energyMetrics.GasCost,
-                    EnergySource.Kerosine => energyMetrics.KersosineCost,
-                    _ => throw new InvalidEnergyTypeException($"You have to provide an energy type for powerplant {Name}"),
-                };
-                CostPerMW = ResourceCostPerMw / Efficiency;
-                if (EnergySource == EnergySource.Gas && co2CostEnabled)
-                {
-                    CostPerMW += energyMetrics.CO2PerMw * energyMetrics.Co2;
-                }
             }
         }
 
-        // gets a shorter representation of the Power plant
-        public MinimalistPowerPlant GetMinimalist()
+        // will compute the specific values for wind / fossil energies
+        private void ComputeCostPerMW(EnergyMetricsDto energyMetrics, bool co2CostEnabled)
         {
-            return new MinimalistPowerPlant()
+            if (energySource == EnergySource.Wind)
             {
-                CostPerMW = this.CostPerMW,
-                IsTurnedOn = false,
-                PMax = this.PMax,
-                PMin = this.PMin,
-            };
+                CostPerMW = 0;
+            }
+            else if (energySource == EnergySource.Gas)
+            {
+                CostPerMW = energyMetrics.GasCost / efficiency;
+                if (co2CostEnabled)
+                    CostPerMW += energyMetrics.CO2PerMw * energyMetrics.Co2;
+            }
+            else
+            {
+                CostPerMW = energyMetrics.KersosineCost / efficiency;
+            }
+        }
+
+        // will override PDelivered value
+        public void UpdatePDelivered(double value)
+        {
+            PDelivered = value;
+        }
+
+        // will increase PDelivered by given value
+        public void IncreasePDeliveredBy(double amount)
+        {
+            PDelivered += amount;
+        }
+
+        public void TurnOn()
+        {
+            IsTurnedOn = true;
+            PDelivered = PMin;
         }
     }
 }

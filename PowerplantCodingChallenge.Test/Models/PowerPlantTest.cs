@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using NUnit.Framework;
+using PowerplantCodingChallenge.API.Controllers.Dtos;
 using PowerplantCodingChallenge.Models;
 using PowerplantCodingChallenge.Models.Exceptions;
 
@@ -9,12 +10,12 @@ namespace PowerplantCodingChallenge.Test.Models
 {
     public class PowerPlantTest
     {
-        private EnergyMetrics _energyMetrics;
+        private EnergyMetricsDto _energyMetrics;
 
         [OneTimeSetUp]
         public void OneTimeSetup()
         {
-            _energyMetrics = new EnergyMetrics()
+            _energyMetrics = new ()
             {
                 Co2 = 20,
                 GasCost = 15,
@@ -23,67 +24,84 @@ namespace PowerplantCodingChallenge.Test.Models
             };
         }
 
-        [Test]
-        public void EnergyTypeInitialization_Gas()
+        private PowerPlant buildPowerPlant(string name = "name", EnergySource energySource = EnergySource.Wind, double efficiency = 1,
+                                            double pMin = 0, double pMax = 100, EnergyMetricsDto energyMetrics = null, bool co2enabled = false)
         {
-            PowerPlant powerPlant = new PowerPlant();
-
-            powerPlant.Type = "gasfired";
-            Assert.AreEqual(powerPlant.EnergySource, EnergySource.Gas);
+            return new PowerPlant(name, energySource, efficiency, pMin, pMax, energyMetrics, co2enabled);
         }
 
         [Test]
-        public void EnergyTypeInitialization_Kerosine()
+        public void CostPerMW_Gas()
         {
-            PowerPlant powerPlant = new PowerPlant();
+            // arrange + act
+            PowerPlant powerPlant = buildPowerPlant(efficiency: 0.5d, energySource: EnergySource.Gas, energyMetrics: _energyMetrics);
 
-            powerPlant.Type = "turbojet";
-            Assert.AreEqual(powerPlant.EnergySource, EnergySource.Kerosine);
-        }
-
-        [Test]
-        public void EnergyTypeInitialization_Wind()
-        {
-            PowerPlant powerPlant = new PowerPlant();
-
-            powerPlant.Type = "windturbine";
-            Assert.AreEqual(powerPlant.EnergySource, EnergySource.Wind);
-        }
-
-        [Test]
-        public void EnergyTypeInitialization_Unknown()
-        {
-            PowerPlant powerPlant = new PowerPlant();
-
-            Assert.Throws(typeof(InvalidEnergyTypeException), () => powerPlant.Type = "qslmgj");
-        }
-
-        [Test]
-        public void Init_Gas()
-        {
-            PowerPlant powerPlant = new PowerPlant() { Efficiency = 0.5d, EnergySource = EnergySource.Gas };
-
-            powerPlant.Init(_energyMetrics, false);
+            // assert
             Assert.AreEqual(30, powerPlant.CostPerMW);
         }
 
         [Test]
-        public void Init_Kersosine()
+        public void CostPerMW_Kersosine()
         {
-            PowerPlant powerPlant = new PowerPlant() { Efficiency = 0.5d, EnergySource = EnergySource.Kerosine };
+            // arrange + act
+            PowerPlant powerPlant = buildPowerPlant(efficiency: 0.5d, energySource: EnergySource.Kerosine, energyMetrics: _energyMetrics); 
 
-            powerPlant.Init(_energyMetrics, false);
+            // assert
             Assert.AreEqual(100, powerPlant.CostPerMW);
         }
 
         [Test]
-        public void Init_Wind()
+        public void CostPerMW_Wind()
         {
-            PowerPlant powerPlant = new PowerPlant() { Efficiency = 1, EnergySource = EnergySource.Wind, PMax = 100 };
+            // arrage + act
+            PowerPlant powerPlant = buildPowerPlant(efficiency: 1, energySource: EnergySource.Wind, energyMetrics: _energyMetrics, pMax: 100);
 
-            powerPlant.Init(_energyMetrics, false);
+            // assert
             Assert.AreEqual(0, powerPlant.CostPerMW);
             Assert.AreEqual(50, powerPlant.PMax);
+        }
+
+        [Test]
+        public void UpdateDelivered()
+        {
+            // arrange
+            PowerPlant powerPlant = buildPowerPlant(efficiency: 1, energySource: EnergySource.Wind, energyMetrics: _energyMetrics, pMax: 100);
+            double delivered = powerPlant.PDelivered;
+
+            // act
+            powerPlant.UpdatePDelivered(delivered + 10);
+
+            // assert
+            Assert.AreEqual(delivered + 10, powerPlant.PDelivered);
+        }
+
+        [Test]
+        public void IncreasePDeliveredBy()
+        {
+            // arrange
+            PowerPlant powerPlant = buildPowerPlant(efficiency: 1, energySource: EnergySource.Wind, energyMetrics: _energyMetrics, pMax: 100);
+            double delivered = powerPlant.PDelivered;
+
+            // act
+            powerPlant.IncreasePDeliveredBy(10);
+
+            // assert
+            Assert.AreEqual(delivered + 10, powerPlant.PDelivered);
+        }
+
+        [Test]
+        public void TurnOn()
+        {
+            // arrange
+            PowerPlant powerPlant = buildPowerPlant(efficiency: 1, energySource: EnergySource.Gas, energyMetrics: _energyMetrics, pMax: 100, pMin: 10);
+            double initDelivered = powerPlant.PDelivered;
+
+            // act
+            powerPlant.TurnOn();
+
+            // assert
+            Assert.AreEqual(0, initDelivered);
+            Assert.AreEqual(10, powerPlant.PDelivered);
         }
     }
 }

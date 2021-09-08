@@ -11,6 +11,7 @@ using PowerplantCodingChallenge.API.Middlewares;
 using PowerplantCodingChallenge.API.Services.Notifiers;
 using PowerplantCodingChallenge.API.Services.Planners;
 using PowerplantCodingChallenge.Services.Planners;
+using FluentValidation.AspNetCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -34,7 +35,8 @@ namespace PowerplantCodingChallenge
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers()
-                        .AddNewtonsoftJson();
+                    //.AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<Startup>())
+                    .AddNewtonsoftJson();
 
             services.AddScoped<IProductionPlanPlanner, BruteForceTreeGenerationProductionPlanPlanner>();
             services.AddSingleton<IProductionPlanCalculatedNotifier, ProductionPlanCalculatedNotifier>();

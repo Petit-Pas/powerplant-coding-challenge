@@ -8,52 +8,70 @@ namespace PowerplantCodingChallenge.Models
 {
     public class ProductionPlanScenario
     {
-        public List<MinimalistPowerPlant> PowerPlants { get; set; } = new List<MinimalistPowerPlant>();
-        public double PMax { get; set; }
-        public double PMin { get; set; }
-        public double PDelivered { get; set; }
-        public double TotalCost { get; set; }
-
-
-        public void RefreshPs()
+        public ProductionPlanScenario(List<PowerPlant> powerPlants)
         {
-            var TurnedOn = PowerPlants.Where(x => x.IsTurnedOn);
-            PMax = TurnedOn.Select(x => x.PMax).Sum();
-            PMin = TurnedOn.Select(x => x.PMin).Sum();
-            PDelivered = TurnedOn.Select(x => x.PDelivered).Sum();
+            PowerPlants = powerPlants;
         }
 
+        private double PMax;
+        private double PMin;
+
+        public List<PowerPlant> PowerPlants { get; private set; } = new ();
+        public double PDelivered { get; private set; }
+        public double TotalCost { get; private set; }
+
+        /// <summary>
+        ///     Will update TotalCost depending on the PDelivered of each PowerPlant
+        /// </summary>
         public void ComputeTotalCost()
         {
-            TotalCost = 0;
-            foreach (MinimalistPowerPlant powerPlant in PowerPlants)
-            {
-                TotalCost += powerPlant.PDelivered * powerPlant.CostPerMW;
-            }
+            TotalCost = PowerPlants.Sum(x => x.PDelivered * x.CostPerMW);
         }
 
         /// <summary>
-        ///     Should only be called on scenarios where PMin < load < PMax
+        ///     Should only be called on scenarios where PMin < load < PMax => will throw otherwise
         ///     Will modify the PDelivered to reach the given load
         ///     MinimalistPowerPlants should be ordered by CostPerMW to enable the optimization of the scenarios
         /// </summary>
-        /// <param name="requiredLoad"></param>
+        /// <param name="remainingLoad"></param>
         public void FineTune(double requiredLoad)
         {
-            RefreshPs();
+            ComputePs();
             if (PMin > requiredLoad || PMax < requiredLoad)
                 throw new InvalidLoadException("This scenario cannot be finetuned to meet the given load");
-            requiredLoad -= PDelivered;
-            foreach (MinimalistPowerPlant powerPlant in PowerPlants.Where(x => x.IsTurnedOn))
+
+            double remainingLoad = requiredLoad - PDelivered;
+
+            foreach (var powerPlant in PowerPlants.Where(x => x.IsTurnedOn))
             {
                 if (powerPlant.PDelivered != powerPlant.PMax)
                 {
-                    double additionalLoad = Math.Min(requiredLoad, powerPlant.PMax - powerPlant.PDelivered);
-                    powerPlant.PDelivered += additionalLoad;
-                    PDelivered += additionalLoad;
-                    requiredLoad -= additionalLoad;
+                    double additionalLoad = Math.Min(remainingLoad, powerPlant.PMax - powerPlant.PDelivered);
+
+                    powerPlant.IncreasePDeliveredBy(additionalLoad);
+                    remainingLoad -= additionalLoad;
                 }
             }
+            ComputePDelivered();
         }
+
+        public void ComputePs()
+        {
+            ComputePBoundaries();
+            ComputePDelivered();
+        }
+
+        private void ComputePBoundaries()
+        {
+            var TurnedOn = PowerPlants.Where(x => x.IsTurnedOn);
+            PMax = TurnedOn.Sum(x => x.PMax);
+            PMin = TurnedOn.Sum(x => x.PMin);
+        }
+
+        private void ComputePDelivered()
+        {
+            PDelivered = PowerPlants.Where(x => x.IsTurnedOn).Sum(x => x.PDelivered);
+        }
+
     }
 }
