@@ -42,12 +42,6 @@ namespace PowerplantCodingChallenge.Controllers
                 return BadRequest(JsonConvert.SerializeObject(new { errors = messages }));
             }
 
-            if (input.RequiredLoad < 0)
-            {
-                logger.LogWarning("A negative load has been requested.");
-                return BadRequest("Load cannot be negative");
-            }
-
             string errorMessage;
             string errorType;
 
