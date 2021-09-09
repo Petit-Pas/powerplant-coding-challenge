@@ -148,6 +148,30 @@ namespace PowerplantCodingChallenge.Test.Services.Planners
         }
 
         [Test]
+        public void ComputeBestPowerUsage_Gas_AllNeeded()
+        {
+            // arrange
+            PowerPlanDto productionPlan = new(490, _baseEnergyMetrics, new List<PowerPlantDto>()
+            {
+                new("Gas1", EnergySource.Gas.ConvertToString(), 0.5, 10, 100),
+                new("Gas2", EnergySource.Gas.ConvertToString(), 0.6, 10, 100),
+                new("Gas3", EnergySource.Gas.ConvertToString(), 0.8, 10, 100),
+                new("Gas4", EnergySource.Gas.ConvertToString(), 0.3, 10, 100),
+                new("Gas5", EnergySource.Gas.ConvertToString(), 0.45, 10, 100),
+            });
+
+            // act
+            var result = _planner.ComputeBestPowerUsage(productionPlan).ToList();
+
+            // assert
+            Assert.AreEqual(100, result.First(x => x.Name == "Gas1").Power);
+            Assert.AreEqual(100, result.First(x => x.Name == "Gas2").Power);
+            Assert.AreEqual(100, result.First(x => x.Name == "Gas3").Power);
+            Assert.AreEqual(90, result.First(x => x.Name == "Gas4").Power);
+            Assert.AreEqual(100, result.First(x => x.Name == "Gas5").Power);
+        }
+
+        [Test]
         public void ComputeBestPowerUsage_Gas_Pmin()
         {
             // arrange
