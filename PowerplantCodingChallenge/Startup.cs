@@ -28,7 +28,7 @@ namespace PowerplantCodingChallenge
                     //.AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<Startup>())
                     .AddNewtonsoftJson();
 
-            services.AddScoped<IProductionPlanPlanner, BruteForceTreeGenerationProductionPlanPlanner>();
+            services.AddScoped<IProductionPlanPlanner, TreeGenerationProductionPlanPlanner>();
             services.AddSingleton<IProductionPlanCalculatedNotifier, ProductionPlanCalculatedNotifier>();
 
             services.AddLogging(x => x.AddConsole());

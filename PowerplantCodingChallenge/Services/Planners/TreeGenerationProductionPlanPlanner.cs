@@ -11,14 +11,12 @@ using System.Linq;
 
 namespace PowerplantCodingChallenge.API.Services.Planners
 {
-    // ITERATION 3
-
-    public class BruteForceTreeGenerationProductionPlanPlanner : IProductionPlanPlanner
+    public class TreeGenerationProductionPlanPlanner : IProductionPlanPlanner
     {
-        private readonly ILogger<BruteForceTreeGenerationProductionPlanPlanner> logger;
+        private readonly ILogger<TreeGenerationProductionPlanPlanner> logger;
         private readonly IConfiguration configuration;
 
-        public BruteForceTreeGenerationProductionPlanPlanner(ILogger<BruteForceTreeGenerationProductionPlanPlanner> logger, IConfiguration configuration)
+        public TreeGenerationProductionPlanPlanner(ILogger<TreeGenerationProductionPlanPlanner> logger, IConfiguration configuration)
         {
             this.logger = logger;
             this.configuration = configuration;
@@ -45,7 +43,7 @@ namespace PowerplantCodingChallenge.API.Services.Planners
             requiredLoad = productionPlan.RequiredLoad;
 
             // look for the best scenario
-            buildPossibilityTree(powerPlants.Select(x => x.IsTurnedOn).ToArray(), 0, 0, powerPlants.Select(x => x.PMax).Sum());
+            buildPossibilityTree(powerPlants.Select(x => x.IsTurnedOn).ToArray(), 0, 0, powerPlants.Select(x => x.PMax).Sum(), 0);
 
             if (currentBestScenario == null)
                 throw new InvalidLoadException("Found no scenario to provide the asked load");
@@ -66,18 +64,28 @@ namespace PowerplantCodingChallenge.API.Services.Planners
         /// <param name="currentIndex"> the index of the turnedOn array that the recursive is currently at </param>
         /// <param name="currentPMin"> The current minimum possible load for the branch 
         ///                             will increase each time a 0 is set to 1 in turnedOn </param>
-        /// <param name="currentPMax"> The current maximum possible load for the given branch, powerplants that haven't been processed in the recursive are considered on for that calculation
+        /// <param name="absolutePMax"> The absolute maximum possible load for the given branch, powerplants that haven't been processed in the recursive are considered on for that calculation
         ///                             will decrease for the branch everytime we go to the next recursive level while keeping a 0 in turnedOn </param>
-        public void buildPossibilityTree(bool[] turnedOn, int currentIndex, double currentPMin, double currentPMax)
+        /// <param name="currentPMax">  The current possible load for the given branch, only the powerplants that haven been processed (we went trough them with recursive) are considered on for that calculation 
+        ///                             It will increase for the branch everytime we set a plant to ON </param>
+        public void buildPossibilityTree(bool[] turnedOn, int currentIndex, double currentPMin, double absolutePMax, double currentPMax)
         {
             // all branch starting from here will always be above the required load
             if (currentPMin > requiredLoad)
                 return;
             // all branch starting from here will always be below the required load
-            if (currentPMax < requiredLoad)
+            if (absolutePMax < requiredLoad)
                 return;
 
-            // We reached the end of the branch, we can now evaluate the scenario
+            // the current branch can already provide the required load so we can evaluate the scenario
+            // since power plants are ordered by cost efficiency, turning any later power plant ON would be more costly, so we stop the recursive
+            if (currentPMin <= requiredLoad && requiredLoad <= currentPMax)
+            {
+                CheckPossibleScenario(powerPlants, turnedOn, requiredLoad);
+                return;
+            }
+
+            // We reached the end of the branch, the scenario is evaluated and we do not proceed further in the tree
             if (currentIndex == turnedOn.Length)
             {
                 CheckPossibleScenario(powerPlants, turnedOn, requiredLoad);
@@ -87,18 +95,18 @@ namespace PowerplantCodingChallenge.API.Services.Planners
             // if the PowerPlant is already considered "On", it means it had a PMin of 0, hence not generating 2 branch.
             if (turnedOn[currentIndex] == true)
             {
-                buildPossibilityTree(turnedOn, currentIndex + 1, currentPMin, currentPMax);
+                buildPossibilityTree(turnedOn, currentIndex + 1, currentPMin, absolutePMax, currentPMax + powerPlants[currentIndex].PMax);
                 return;
             }
 
             // 1 branch where we turn the current powerPlant On
             bool[] nextTurnedOn = (bool[])(turnedOn.Clone());
             nextTurnedOn[currentIndex] = true;
-            buildPossibilityTree(nextTurnedOn, currentIndex + 1, currentPMin + powerPlants[currentIndex].PMin, currentPMax);
+            buildPossibilityTree(nextTurnedOn, currentIndex + 1, currentPMin + powerPlants[currentIndex].PMin, absolutePMax, currentPMax + powerPlants[currentIndex].PMax);
 
             // 1 branch where we keep the current powerPlant Off
             nextTurnedOn = (bool[])(turnedOn.Clone());
-            buildPossibilityTree(nextTurnedOn, currentIndex + 1, currentPMin, currentPMax - powerPlants[currentIndex].PMax);
+            buildPossibilityTree(nextTurnedOn, currentIndex + 1, currentPMin, absolutePMax - powerPlants[currentIndex].PMax, currentPMax);
 
         }
 

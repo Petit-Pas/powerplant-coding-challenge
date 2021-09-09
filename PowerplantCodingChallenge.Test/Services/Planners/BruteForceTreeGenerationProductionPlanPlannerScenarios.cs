@@ -13,9 +13,9 @@ namespace PowerplantCodingChallenge.Test.Services.Planners
 {
     public class BruteForceTreeGenerationProductionPlanPlannerScenarios
     {
-        private BruteForceTreeGenerationProductionPlanPlanner _planner;
+        private TreeGenerationProductionPlanPlanner _planner;
 
-        private BruteForceTreeGenerationProductionPlanPlanner _plannerCo2Enabled;
+        private TreeGenerationProductionPlanPlanner _plannerCo2Enabled;
 
         private EnergyMetricsDto _baseEnergyMetrics;
 
@@ -28,20 +28,20 @@ namespace PowerplantCodingChallenge.Test.Services.Planners
         [SetUp]
         public void Setup()
         {
-            Mock<ILogger<BruteForceTreeGenerationProductionPlanPlanner>> logger = new();
+            Mock<ILogger<TreeGenerationProductionPlanPlanner>> logger = new();
             Mock<IConfigurationSection> configurationSection = new();
             configurationSection.SetupGet(x => x.Value).Returns("false");
             Mock<IConfiguration> configuration = new();
             configuration.Setup(x => x.GetSection(It.IsAny<string>()))
                     .Returns(configurationSection.Object);
-            _planner = new BruteForceTreeGenerationProductionPlanPlanner(logger.Object, configuration.Object);
+            _planner = new TreeGenerationProductionPlanPlanner(logger.Object, configuration.Object);
 
             Mock<IConfigurationSection> configurationSectionCO2Enabled = new Mock<IConfigurationSection>();
             configurationSectionCO2Enabled.SetupGet(x => x.Value).Returns("true");
             Mock<IConfiguration> configurationCO2Enabled = new Mock<IConfiguration>();
             configurationCO2Enabled.Setup(x => x.GetSection(It.IsAny<string>()))
                     .Returns(configurationSectionCO2Enabled.Object);
-            _plannerCo2Enabled = new BruteForceTreeGenerationProductionPlanPlanner(logger.Object, configurationCO2Enabled.Object);
+            _plannerCo2Enabled = new TreeGenerationProductionPlanPlanner(logger.Object, configurationCO2Enabled.Object);
         }
 
         [Test]
@@ -267,8 +267,8 @@ namespace PowerplantCodingChallenge.Test.Services.Planners
             Assert.AreEqual(480, result.Select(x => x.Power).Sum());
             Assert.AreEqual(90, result.First(x => x.Name == "windpark1").Power);
             Assert.AreEqual(21.6, result.First(x => x.Name == "windpark2").Power);
-            Assert.AreEqual(268.4, result.First(x => x.Name == "gasfiredbig1").Power);
-            Assert.AreEqual(100, result.First(x => x.Name == "gasfiredbig2").Power);
+            Assert.AreEqual(368.4, result.First(x => x.Name == "gasfiredbig1").Power);
+            Assert.AreEqual(0, result.First(x => x.Name == "gasfiredbig2").Power);
             Assert.AreEqual(0, result.First(x => x.Name == "gasfiredsomewhatsmaller").Power);
             Assert.AreEqual(0, result.First(x => x.Name == "tj1").Power);
         }
