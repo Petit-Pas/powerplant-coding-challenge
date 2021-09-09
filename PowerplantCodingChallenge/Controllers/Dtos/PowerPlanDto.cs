@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System.Collections.Generic;
 
-namespace PowerplantCodingChallenge.API.Controllers.Dtos
+namespace PowerPlantCodingChallenge.API.Controllers.Dtos
 {
     public class PowerPlanDto
     {

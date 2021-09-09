@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace PowerplantCodingChallenge.Models.Exceptions
+namespace PowerPlantCodingChallenge.API.Models.Exceptions
 {
     public class InvalidEnergyTypeException : Exception
     {

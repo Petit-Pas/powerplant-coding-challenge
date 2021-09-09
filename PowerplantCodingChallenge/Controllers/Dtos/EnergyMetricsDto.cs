@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace PowerplantCodingChallenge.API.Controllers.Dtos
+namespace PowerPlantCodingChallenge.API.Controllers.Dtos
 {
     public class EnergyMetricsDto
     {

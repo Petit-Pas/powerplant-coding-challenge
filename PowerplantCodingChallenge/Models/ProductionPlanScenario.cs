@@ -1,9 +1,9 @@
-﻿using PowerplantCodingChallenge.Models.Exceptions;
+﻿using PowerPlantCodingChallenge.API.Models.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace PowerplantCodingChallenge.Models
+namespace PowerplantCodingChallenge.API.Models
 {
     public class ProductionPlanScenario
     {
@@ -12,10 +12,10 @@ namespace PowerplantCodingChallenge.Models
             PowerPlants = powerPlants;
         }
 
-        private double pMax;
-        private double pMin;
+        private double _pMax;
+        private double _pMin;
 
-        public List<PowerPlant> PowerPlants { get; private set; } = new ();
+        public List<PowerPlant> PowerPlants { get; private set; } = new();
         public double PDelivered { get; private set; }
         public double TotalCost { get; private set; }
 
@@ -32,18 +32,18 @@ namespace PowerplantCodingChallenge.Models
         ///     Will modify the PDelivered to reach the given load
         ///     MinimalistPowerPlants should be ordered by CostPerMW to enable the optimization of the scenarios
         /// </summary>
-        /// <param name="remainingLoad"></param>
+        /// <param name="requiredLoad"></param>
         public void FineTune(double requiredLoad)
         {
             ComputePs();
-            if (pMin > requiredLoad || pMax < requiredLoad)
+            if (_pMin > requiredLoad || _pMax < requiredLoad)
                 throw new InvalidLoadException("This scenario cannot be finetuned to meet the given load");
 
             double remainingLoad = requiredLoad - PDelivered;
 
             foreach (var powerPlant in PowerPlants.Where(x => x.IsTurnedOn))
             {
-                if (powerPlant.PDelivered != powerPlant.PMax)
+                if (powerPlant.PDelivered.CompareTo(powerPlant.PMax) != 0)
                 {
                     double additionalLoad = Math.Min(remainingLoad, powerPlant.PMax - powerPlant.PDelivered);
 
@@ -63,9 +63,9 @@ namespace PowerplantCodingChallenge.Models
 
         private void ComputePBoundaries()
         {
-            var TurnedOn = PowerPlants.Where(x => x.IsTurnedOn);
-            pMax = TurnedOn.Sum(x => x.PMax);
-            pMin = TurnedOn.Sum(x => x.PMin);
+            var turnedOn = PowerPlants.Where(x => x.IsTurnedOn).ToList();
+            _pMax = turnedOn.Sum(x => x.PMax);
+            _pMin = turnedOn.Sum(x => x.PMin);
         }
 
         private void ComputePDelivered()

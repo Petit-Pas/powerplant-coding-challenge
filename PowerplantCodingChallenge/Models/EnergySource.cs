@@ -1,6 +1,6 @@
-﻿using PowerplantCodingChallenge.Models.Exceptions;
+﻿using PowerPlantCodingChallenge.API.Models.Exceptions;
 
-namespace PowerplantCodingChallenge.Models
+namespace PowerplantCodingChallenge.API.Models
 {
     public enum EnergySource
     {

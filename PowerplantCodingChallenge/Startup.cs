@@ -5,12 +5,12 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
-using PowerplantCodingChallenge.API.Middlewares;
-using PowerplantCodingChallenge.API.Services.Notifiers;
 using PowerplantCodingChallenge.API.Services.Planners;
-using PowerplantCodingChallenge.Services.Planners;
+using PowerPlantCodingChallenge.API.Middlewares;
+using PowerPlantCodingChallenge.API.Services.Notifiers;
+using PowerPlantCodingChallenge.API.Services.Planners;
 
-namespace PowerplantCodingChallenge
+namespace PowerPlantCodingChallenge.API
 {
     public class Startup
     {
@@ -25,7 +25,6 @@ namespace PowerplantCodingChallenge
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers()
-                    //.AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<Startup>())
                     .AddNewtonsoftJson();
 
             services.AddScoped<IProductionPlanPlanner, TreeGenerationProductionPlanPlanner>();

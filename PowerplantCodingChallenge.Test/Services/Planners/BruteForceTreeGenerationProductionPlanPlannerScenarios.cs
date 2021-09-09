@@ -2,14 +2,14 @@
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
-using PowerplantCodingChallenge.API.Controllers.Dtos;
-using PowerplantCodingChallenge.API.Services.Planners;
-using PowerplantCodingChallenge.Models;
-using PowerplantCodingChallenge.Models.Exceptions;
+using PowerplantCodingChallenge.API.Models;
+using PowerPlantCodingChallenge.API.Controllers.Dtos;
+using PowerPlantCodingChallenge.API.Models.Exceptions;
+using PowerPlantCodingChallenge.API.Services.Planners;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace PowerplantCodingChallenge.Test.Services.Planners
+namespace PowerPlantCodingChallenge.Test.Services.Planners
 {
     public class BruteForceTreeGenerationProductionPlanPlannerScenarios
     {
@@ -51,7 +51,7 @@ namespace PowerplantCodingChallenge.Test.Services.Planners
             PowerPlanDto productionPlan = new (500, _baseEnergyMetrics, new List<PowerPlantDto>()
             {
                 new("Gas1", EnergySource.Gas.ConvertToString(), 0.5, 50, 100),
-                new("Gas2", EnergySource.Gas.ConvertToString(), 0.5, 50, 100),
+                new("Gas2", EnergySource.Gas.ConvertToString(), 0.5, 50, 100)
             });
 
             // assert
@@ -65,7 +65,7 @@ namespace PowerplantCodingChallenge.Test.Services.Planners
             PowerPlanDto productionPlan = new (20, _baseEnergyMetrics, new List<PowerPlantDto>()
             {
                 new("Gas1", EnergySource.Gas.ConvertToString(), 0.5, 50, 100),
-                new("Wind1", EnergySource.Wind.ConvertToString(), 1, 0, 50),
+                new("Wind1", EnergySource.Wind.ConvertToString(), 1, 0, 50)
             });
 
             // assert
@@ -79,7 +79,7 @@ namespace PowerplantCodingChallenge.Test.Services.Planners
             PowerPlanDto productionPlan = new (25, _baseEnergyMetrics, new List<PowerPlantDto>()
             {
                 new("Gas1", EnergySource.Gas.ConvertToString(), 0.5, 10, 100),
-                new("Wind1", EnergySource.Wind.ConvertToString(), 1, 0, 50),
+                new("Wind1", EnergySource.Wind.ConvertToString(), 1, 0, 50)
             });
 
             // act
@@ -97,7 +97,7 @@ namespace PowerplantCodingChallenge.Test.Services.Planners
             PowerPlanDto productionPlan = new (50, _baseEnergyMetrics, new List<PowerPlantDto>()
             {
                 new("Gas1", EnergySource.Gas.ConvertToString(), 0.5, 10, 100),
-                new("Wind1", EnergySource.Wind.ConvertToString(), 1, 0, 50),
+                new("Wind1", EnergySource.Wind.ConvertToString(), 1, 0, 50)
             });
 
             // act
@@ -115,7 +115,7 @@ namespace PowerplantCodingChallenge.Test.Services.Planners
             PowerPlanDto productionPlan = new (20, _baseEnergyMetrics, new List<PowerPlantDto>()
             {
                 new("Gas1", EnergySource.Gas.ConvertToString(), 0.5, 10, 100),
-                new("Wind1", EnergySource.Wind.ConvertToString(), 1, 0, 50),
+                new("Wind1", EnergySource.Wind.ConvertToString(), 1, 0, 50)
             });
 
             // act
@@ -136,7 +136,7 @@ namespace PowerplantCodingChallenge.Test.Services.Planners
                 new("Gas2", EnergySource.Gas.ConvertToString(), 0.6, 10, 100),
                 new("Gas3", EnergySource.Gas.ConvertToString(), 0.8, 10, 100),
                 new("Gas4", EnergySource.Gas.ConvertToString(), 0.3, 10, 100),
-                new("Gas5", EnergySource.Gas.ConvertToString(), 0.45, 10, 100),
+                new("Gas5", EnergySource.Gas.ConvertToString(), 0.45, 10, 100)
             });
 
             // act
@@ -157,7 +157,7 @@ namespace PowerplantCodingChallenge.Test.Services.Planners
                 new("Gas2", EnergySource.Gas.ConvertToString(), 0.6, 10, 100),
                 new("Gas3", EnergySource.Gas.ConvertToString(), 0.8, 10, 100),
                 new("Gas4", EnergySource.Gas.ConvertToString(), 0.3, 10, 100),
-                new("Gas5", EnergySource.Gas.ConvertToString(), 0.45, 10, 100),
+                new("Gas5", EnergySource.Gas.ConvertToString(), 0.45, 10, 100)
             });
 
             // act
@@ -179,7 +179,7 @@ namespace PowerplantCodingChallenge.Test.Services.Planners
             {
                 new("Wind1", EnergySource.Wind.ConvertToString(), 1, 0, 50),
                 new("Gas1", EnergySource.Gas.ConvertToString(), 0.5, 110, 200),
-                new("Gas2", EnergySource.Gas.ConvertToString(), 0.8, 80, 150),
+                new("Gas2", EnergySource.Gas.ConvertToString(), 0.8, 80, 150)
             });
 
             // act
@@ -198,7 +198,7 @@ namespace PowerplantCodingChallenge.Test.Services.Planners
             {
                 new("Wind1", EnergySource.Wind.ConvertToString(), 1, 0, 150),
                 new("Gas1", EnergySource.Gas.ConvertToString(), 0.5, 100, 200),
-                new("Kerosine1", EnergySource.Kerosine.ConvertToString(), 0.5, 0, 200),
+                new("Kerosine1", EnergySource.Kerosine.ConvertToString(), 0.5, 0, 200)
             });
 
             // act
@@ -216,7 +216,7 @@ namespace PowerplantCodingChallenge.Test.Services.Planners
             PowerPlanDto productionPlan = new (150, _baseEnergyMetrics, new List<PowerPlantDto>()
             {
                 new("Gas1", EnergySource.Gas.ConvertToString(), 0.3, 100, 200),
-                new("Kerosine1", EnergySource.Kerosine.ConvertToString(), 1, 0, 200),
+                new("Kerosine1", EnergySource.Kerosine.ConvertToString(), 1, 0, 200)
             });
 
             // act
@@ -236,7 +236,7 @@ namespace PowerplantCodingChallenge.Test.Services.Planners
             PowerPlanDto productionPlan = new (60, energyMetrics, new List<PowerPlantDto> {
                 new("windpark1", EnergySource.Wind.ConvertToString(), 1, 0, 20),
                 new("gasfired", EnergySource.Gas.ConvertToString(), 0.9, 50, 100),
-                new("gasfiredinefficient", EnergySource.Gas.ConvertToString(), 0.1, 0, 100),
+                new("gasfiredinefficient", EnergySource.Gas.ConvertToString(), 0.1, 0, 100)
             });
 
             // act
@@ -257,7 +257,7 @@ namespace PowerplantCodingChallenge.Test.Services.Planners
             PowerPlanDto productionPlan = new (80, energyMetrics, new List<PowerPlantDto> {
                 new("windpark1", EnergySource.Wind.ConvertToString(), 1, 0, 60),
                 new("gasfired", EnergySource.Gas.ConvertToString(), 0.9, 50, 100),
-                new("gasfiredinefficient", EnergySource.Gas.ConvertToString(), 0.1, 0, 200),
+                new("gasfiredinefficient", EnergySource.Gas.ConvertToString(), 0.1, 0, 200)
             });
 
             // act
@@ -281,7 +281,7 @@ namespace PowerplantCodingChallenge.Test.Services.Planners
                 new("gasfiredsomewhatsmaller", EnergySource.Gas.ConvertToString(), 0.37, 40, 210),
                 new("tj1", EnergySource.Kerosine.ConvertToString(), 0.3, 0, 16),
                 new("windpark1", EnergySource.Wind.ConvertToString(), 1, 0, 150),
-                new("windpark2", EnergySource.Wind.ConvertToString(), 1, 0, 36),
+                new("windpark2", EnergySource.Wind.ConvertToString(), 1, 0, 36)
             });
 
             // act
@@ -308,7 +308,7 @@ namespace PowerplantCodingChallenge.Test.Services.Planners
                 new("gasfiredsomewhatsmaller", EnergySource.Gas.ConvertToString(), 0.37, 40, 210),
                 new("tj1", EnergySource.Kerosine.ConvertToString(), 0.3, 0, 16),
                 new("windpark1", EnergySource.Wind.ConvertToString(), 1, 0, 150),
-                new("windpark2", EnergySource.Wind.ConvertToString(), 1, 0, 36),
+                new("windpark2", EnergySource.Wind.ConvertToString(), 1, 0, 36)
             });
 
             // act
@@ -335,7 +335,7 @@ namespace PowerplantCodingChallenge.Test.Services.Planners
                 new("gasfiredsomewhatsmaller", EnergySource.Gas.ConvertToString(), 0.37, 40, 210),
                 new("tj1", EnergySource.Kerosine.ConvertToString(), 0.3, 0, 16),
                 new("windpark1", EnergySource.Wind.ConvertToString(), 1, 0, 150),
-                new("windpark2", EnergySource.Wind.ConvertToString(), 1, 0, 36),
+                new("windpark2", EnergySource.Wind.ConvertToString(), 1, 0, 36)
             });
 
             // act

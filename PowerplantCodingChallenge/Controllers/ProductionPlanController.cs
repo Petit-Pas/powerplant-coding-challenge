@@ -1,28 +1,28 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using PowerplantCodingChallenge.API.Controllers.Dtos;
-using PowerplantCodingChallenge.API.Services.Notifiers;
-using PowerplantCodingChallenge.Models.Exceptions;
-using PowerplantCodingChallenge.Services.Planners;
+using PowerplantCodingChallenge.API.Services.Planners;
+using PowerPlantCodingChallenge.API.Controllers.Dtos;
+using PowerPlantCodingChallenge.API.Models.Exceptions;
+using PowerPlantCodingChallenge.API.Services.Notifiers;
 using System;
 using System.Linq;
 
-namespace PowerplantCodingChallenge.Controllers
+namespace PowerPlantCodingChallenge.API.Controllers
 {
     [ApiController]
     [Route("[controller]")]
     public class ProductionPlanController : Controller
     {
-        private readonly IProductionPlanPlanner planner;
-        private readonly IProductionPlanCalculatedNotifier notifier;
-        private readonly ILogger<ProductionPlanController> logger;
+        private readonly IProductionPlanPlanner _planner;
+        private readonly IProductionPlanCalculatedNotifier _notifier;
+        private readonly ILogger<ProductionPlanController> _logger;
 
         public ProductionPlanController(IProductionPlanPlanner planner, IProductionPlanCalculatedNotifier notifier, ILogger<ProductionPlanController> logger)
         {
-            this.planner = planner;
-            this.notifier = notifier;
-            this.logger = logger;
+            this._planner = planner;
+            this._notifier = notifier;
+            this._logger = logger;
         }
 
         [HttpPost]
@@ -35,7 +35,7 @@ namespace PowerplantCodingChallenge.Controllers
             if (result.Errors.Count != 0)
             {
                 var messages = result.Errors.Select(x => x.ErrorMessage);
-                logger.LogWarning($"a request generated {result.Errors.Count} errors: " + String.Join(", ", messages));
+                _logger.LogWarning($"a request generated {result.Errors.Count} errors: " + String.Join(", ", messages));
                 return BadRequest(JsonConvert.SerializeObject(new { errors = messages }));
             }
 
@@ -43,8 +43,8 @@ namespace PowerplantCodingChallenge.Controllers
             string errorType;
             try
             {
-                PowerPlantUsageDto[] response = planner.ComputeBestPowerUsage(input);
-                notifier.Notify(input, response);
+                PowerPlantUsageDto[] response = _planner.ComputeBestPowerUsage(input);
+                _notifier.Notify(input, response);
                 return Ok(response);
             }
             catch (InvalidLoadException e)
@@ -62,7 +62,7 @@ namespace PowerplantCodingChallenge.Controllers
                 errorMessage = e.Message;
                 errorType = e.GetType().ToString();
             }
-            logger.LogWarning($"An exception of type {errorType} has been thrown: {errorMessage}");
+            _logger.LogWarning($"An exception of type {errorType} has been thrown: {errorMessage}");
             return BadRequest(errorMessage);
         }
     }

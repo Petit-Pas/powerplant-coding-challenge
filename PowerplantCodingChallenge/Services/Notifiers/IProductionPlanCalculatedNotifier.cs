@@ -1,7 +1,7 @@
-﻿using PowerplantCodingChallenge.API.Controllers.Dtos;
+﻿using PowerPlantCodingChallenge.API.Controllers.Dtos;
 using System.Threading.Tasks;
 
-namespace PowerplantCodingChallenge.API.Services.Notifiers
+namespace PowerPlantCodingChallenge.API.Services.Notifiers
 {
     public class ProductionPlanCalculatedEventArgs
     {

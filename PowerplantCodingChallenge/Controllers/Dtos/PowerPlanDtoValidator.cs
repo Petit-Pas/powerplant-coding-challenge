@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 
-namespace PowerplantCodingChallenge.API.Controllers.Dtos
+namespace PowerPlantCodingChallenge.API.Controllers.Dtos
 {
     public class PowerPlanDtoValidator : AbstractValidator<PowerPlanDto>
     {

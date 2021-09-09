@@ -1,6 +1,6 @@
-﻿using PowerplantCodingChallenge.API.Controllers.Dtos;
+﻿using PowerPlantCodingChallenge.API.Controllers.Dtos;
 
-namespace PowerplantCodingChallenge.Services.Planners
+namespace PowerplantCodingChallenge.API.Services.Planners
 {
     public interface IProductionPlanPlanner
     {

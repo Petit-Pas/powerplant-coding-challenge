@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using PowerplantCodingChallenge.API.Services.Notifiers;
+using PowerPlantCodingChallenge.API.Services.Notifiers;
 using System;
 using System.Net;
 using System.Net.WebSockets;
@@ -10,24 +10,25 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace PowerplantCodingChallenge.API.Middlewares
+namespace PowerPlantCodingChallenge.API.Middlewares
 {
     public class WebSocketsMiddleware
     {
-        private readonly RequestDelegate next;
-        private readonly IProductionPlanCalculatedNotifier notifier;
-        private readonly ILogger<WebSocketsMiddleware> logger;
-        private readonly IHostApplicationLifetime applicationLifetime;
+        private readonly RequestDelegate _next;
+        private readonly IProductionPlanCalculatedNotifier _notifier;
+        private readonly ILogger<WebSocketsMiddleware> _logger;
+        private readonly IHostApplicationLifetime _applicationLifetime;
 
         public WebSocketsMiddleware(RequestDelegate next, 
                                     IProductionPlanCalculatedNotifier notifier, 
                                     ILogger<WebSocketsMiddleware> logger,
                                     IHostApplicationLifetime applicationLifetime)
         {
-            this.next = next;
-            this.notifier = notifier;
-            this.logger = logger;
-            this.applicationLifetime = applicationLifetime;
+            this._next = next;
+            this._notifier = notifier;
+            this._logger = logger;
+            this._logger = logger;
+            this._applicationLifetime = applicationLifetime;
         }
 
         public async Task InvokeAsync(HttpContext context)
@@ -48,7 +49,7 @@ namespace PowerplantCodingChallenge.API.Middlewares
             }
             else
             {
-                await next(context);
+                await _next(context);
             }
         }
 
@@ -57,14 +58,14 @@ namespace PowerplantCodingChallenge.API.Middlewares
             ProductionPlanCalculatedEventHandler eventHandler = new ProductionPlanCalculatedEventHandler(async (e) => {
                 await SendPlanToSocket(e, webSocket);
             });
-            notifier.ProductionPlanCalculated += eventHandler;
-            logger.LogInformation("A client has connected to the WebSocket");
+            _notifier.ProductionPlanCalculated += eventHandler;
+            _logger.LogInformation("A client has connected to the WebSocket");
 
             await WaitUntilClosed(webSocket);
 
-            notifier.ProductionPlanCalculated -= eventHandler;
+            _notifier.ProductionPlanCalculated -= eventHandler;
             webSocket.Dispose();
-            logger.LogInformation("A client has disconnected from the WebSocket");
+            _logger.LogInformation("A client has disconnected from the WebSocket");
         }
 
         private async Task SendPlanToSocket(ProductionPlanCalculatedEventArgs e, WebSocket webSocket)
@@ -82,13 +83,14 @@ namespace PowerplantCodingChallenge.API.Middlewares
         {
             try
             {
-                while (webSocket.State != WebSocketState.Closed && !applicationLifetime.ApplicationStopping.IsCancellationRequested)
+                while (webSocket.State != WebSocketState.Closed && !_applicationLifetime.ApplicationStopping.IsCancellationRequested)
                 {
-                    await Task.Delay(2000, applicationLifetime.ApplicationStopping);
+                    await Task.Delay(2000, _applicationLifetime.ApplicationStopping);
                 }
             }
             catch (TaskCanceledException)
             {
+                // the application is closing
             }
         }
     }
