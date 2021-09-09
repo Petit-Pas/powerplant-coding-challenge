@@ -49,7 +49,7 @@ namespace PowerPlantCodingChallenge.API.Services.Planners
                 throw new InvalidLoadException("Found no scenario to provide the asked load");
 
             // creates response
-            var response = _currentBestScenario.PowerPlants.ConvertAll(x => new PowerPlantUsageDto(x.Name, x.PDelivered)).ToArray();
+            var response = _currentBestScenario.PowerPlants.ConvertAll(x => new PowerPlantUsageDto(x.Name, Math.Round(x.PDelivered, 1))).ToArray();
 
             stopwatch.Stop();
             _logger.LogInformation($"Total process took {stopwatch.ElapsedMilliseconds}ms.");
