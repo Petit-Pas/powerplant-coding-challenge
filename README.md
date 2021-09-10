@@ -18,6 +18,24 @@ In the main folder you may use those commands:
 
 You may start the API by using `dotnet run` in the `PowerplantCodingChallenge` folder.
 
+## Using Docker
+
+You may start the API using a Docker container instead.
+Please make sure that docker is installed on your machine and is correctly running.
+
+Docker should be configured to use **Linux** images
+
+#### Building the image 
+
+From the root folder, execute the following command:
+
+`docker build -f .\PowerplantCodingChallenge\Dockerfile -t imagename .`
+
+#### Creating and starting a container
+
+Execute the following command:
+`docker container run -d --name containername -p 8888:80 imagename`
+
 ## Documentation
 
 You may find a swagger API documentation on http://localhost:8888/swagger/index.html
